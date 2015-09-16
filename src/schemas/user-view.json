@@ -1,0 +1,19 @@
+{
+    "type":        "object",
+    "id":          "user-post",
+    "title":       "gpii-express-user user view schema",
+    "description": "This schema defines the format returned when viewing a user's information.",
+    "properties": {
+        "email": {
+            "$ref": "user-core#/definitions/email"
+        },
+        "username": {
+            "$ref": "user-core#/definitions/username"
+        },
+        "profile": {
+            "$ref": "user-core#/definitions/profile"
+        }
+    },
+    "additionalFields": false,
+    "required": ["email", "username"]
+}

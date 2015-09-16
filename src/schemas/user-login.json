@@ -1,0 +1,17 @@
+{
+    "type":        "object",
+    "id":          "user-login",
+    "title":       "gpii-express-user login schema",
+    "description": "This schema defines the format accepted when logging in.",
+    "properties": {
+        "username": {
+            "description": "You can log in using either a valid username or email address.",
+            "anyOf": [ { "$ref": "user-core#/definitions/email" },  {"$ref": "user-core#/definitions/username"}]
+        },
+        "password": {
+            "description": "A password is required in order to log in.",
+            "$ref": "user-core#/definitions/password"
+        }
+    },
+    "required": ["username", "password"]
+}

@@ -1,0 +1,41 @@
+{
+    "type":        "object",
+    "id":          "user-core",
+    "title":       "gpii-express-user core user schema",
+    "description": "This schema defines the common format for user data transmitted and received by the gpii-express-user library.",
+    "definitions": {
+        "email": {
+            "type": "string",
+            "format": "email"
+        },
+        "username": {
+            "type": "string"
+        },
+        "password": {
+            "allOf": [
+                { "type": "string", "description": "The password must be at least 8 characters long.", "minLength": 8 },
+                { "type": "string", "description": "The password must have at least one uppercase letter.", "pattern": "[A-Z]+"},
+                { "type": "string", "description": "The password must have at least one lowercase letter.", "pattern": "[a-z]+"},
+                { "type": "string", "description": "The password must have at least one number or special character.", "pattern": "[^a-zA-Z]"}
+            ]
+        },
+        "profile": {
+            "type": "object"
+        }
+    },
+    "properties": {
+        "email": {
+            "$ref": "user-core#/definitions/email"
+        },
+        "username": {
+            "$ref": "user-core#/definitions/username"
+        },
+        "password": {
+            "$ref": "user-core#/definitions/password"
+        },
+        "profile": {
+            "$ref": "user-core#/definitions/profile"
+        }
+    },
+    "required": ["email", "username"]
+}

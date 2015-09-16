@@ -1,0 +1,30 @@
+{
+    "type":        "object",
+    "id":          "message-core",
+    "title":       "gpii-express-user core message schema",
+    "description": "This schema defines the core message format used in providing feedback for a given request.",
+    "definitions": {
+        "ok": {
+            "type": "boolean"
+        },
+        "message": {
+            "type": "string",
+            "minLength": 1
+        },
+        "errors": {
+            "anyOf": [{ "type": "object"}, { "type": "array"}]
+        }
+    },
+    "properties": {
+        "ok": {
+            "$ref": "user-message#/definitions/ok"
+        },
+        "errors": {
+            "$ref": "user-message#/definitions/errors"
+        },
+        "message": {
+            "$ref": "user-message#/definitions/message"
+        }
+    },
+    "required": ["ok"]
+}

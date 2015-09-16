@@ -1,0 +1,21 @@
+{
+    "type":        "object",
+    "id":          "user-message",
+    "title":       "gpii-express-user core user schema",
+    "description": "This schema defines the message format used in providing feedback on a request to /api/user.",
+    "allOf": [
+        { "$ref": "message-core#" },
+        {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "user-view#"
+                }
+            }
+        }
+    ],
+    "oneOf": [
+        { "required": ["user"] },
+        { "required": ["message"] }
+    ]
+}

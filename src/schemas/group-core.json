@@ -1,0 +1,27 @@
+{
+    "type":        "object",
+    "id":          "group-core",
+    "title":       "gpii-express-user group schema",
+    "description": "This schema defines the common format for group data transmitted and received by the gpii-express-user library.",
+    "definitions": {
+        "name": {
+            "type": "string",
+            "description": "A group name may not contain any non-URL-safe characters (such as a slash)."
+        },
+        "members": {
+            "type": "array",
+            "items": {
+                "$ref": "user-core#/username"
+            }
+        }
+    },
+    "properties": {
+        "name": {
+            "$ref": "group#/definitions/name"
+        },
+        "members": {
+            "$ref": "group#/definitions/members"
+        }
+    },
+    "required": ["name", "members"]
+}

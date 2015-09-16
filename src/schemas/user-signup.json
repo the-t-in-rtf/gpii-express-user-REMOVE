@@ -1,0 +1,24 @@
+{
+    "type":        "object",
+    "id":          "user-post",
+    "title":       "gpii-express-user POST user schema",
+    "description": "This schema defines the format accepted when creating a new user.",
+    "properties": {
+        "email": {
+            "$ref": "user-core#/definitions/email"
+        },
+        "username": {
+            "$ref": "user-core#/definitions/username"
+        },
+        "password": {
+            "$ref": "user-core#/definitions/password"
+        },
+        "confirm": {
+            "$ref": "user-core#/definitions/password"
+        },
+        "profile": {
+            "$ref": "user-core#/definitions/profile"
+        }
+    },
+    "required": ["email", "username", "password", "confirm"]
+}
