@@ -27,22 +27,31 @@ fluid.defaults("gpii.express.user.session.tests.request", {
     method:     "GET"
 });
 
-gpii.express.user.session.tests.checkCookies = function (response, body, cookieJar, shouldHaveSessionCookie) {
+gpii.express.user.session.tests.checkCookies = function (response, body, cookieJar, cookieExpected) {
     gpii.express.tests.helpers.isSaneResponse(jqUnit, response, body, 200);
-    var hasSessionCookie = false;
 
+    var sessionCookie = null;
     fluid.each(cookieJar.cookie, function (value) {
         var cookieAsJson = cookie.parse(value);
         if (cookieAsJson._gpii_session) {
-            hasSessionCookie = true;
+            // Request's `request` and `response` objects will wrap JSON content and unpack it automatically.
+            // In our tests, we do it manually by looking for the `j` element that indicates wrapped JSON content.
+            var trimmedString = cookieAsJson._gpii_session.substring(2);
+            sessionCookie = JSON.parse(trimmedString);
         }
     });
 
-    jqUnit.assertEquals("The session cookie should" + shouldHaveSessionCookie ? " " : " not " + "be set...", shouldHaveSessionCookie, hasSessionCookie);
+    if (cookieExpected) {
+        jqUnit.assertLeftHand("The session cookie should be as expected...", cookieExpected, sessionCookie);
+    }
+    else {
+        jqUnit.assertNull("There should not be a session cookie...", sessionCookie);
+    }
 };
 
 fluid.defaults("gpii.express.user.session.tests.caseHolder", {
     gradeNames: ["gpii.express.tests.caseHolder"],
+    expectedCookie: { foo: "bar"},
     rawModules: [{
         tests: [
             // TODO: Discuss with Antranig, the order matters here as the cookieJar appears not to be reset between tests.
@@ -78,7 +87,7 @@ fluid.defaults("gpii.express.user.session.tests.caseHolder", {
                     {
                         listener: "gpii.express.user.session.tests.checkCookies",
                         event: "{renewCookieRequest}.events.onComplete",
-                        args: ["{renewCookieRequest}.nativeResponse", "{arguments}.0", "{cookieJar}", true]
+                        args: ["{renewCookieRequest}.nativeResponse", "{arguments}.0", "{cookieJar}", "{that}.options.expectedCookie"]
                     }
                 ]
 

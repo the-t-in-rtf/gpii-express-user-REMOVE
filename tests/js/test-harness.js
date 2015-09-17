@@ -26,7 +26,7 @@ fluid.defaults("gpii.express.user.tests.helloHandler", {
 // Cookie setting test router and handler.
 fluid.registerNamespace("gpii.express.user.tests.cookieSetter.handler");
 gpii.express.user.tests.cookieSetter.handler.setCookie = function (that) {
-    that.response.cookie("_gpii_session", "value");
+    that.response.cookie("_gpii_session", { foo: "bar" });
     that.sendResponse(200, "The cookie has been set");
 };
 
