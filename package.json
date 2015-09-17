@@ -1,8 +1,8 @@
 {
-  "name":        "gpii-express-user",
-  "version":     "1.0.0",
+  "name": "gpii-express-user",
+  "version": "1.0.0",
   "description": "A series of Fluid components to provide simple user management.",
-  "main":         "src/js/index.js",
+  "main": "src/js/index.js",
   "scripts": {
     "test": "tests/all-tests.js",
     "postinstall": "grunt dedupe-infusion"
@@ -18,21 +18,22 @@
   },
   "homepage": "https://github.com/the-t-in-rtf/gpii-express-user",
   "dependencies": {
-    "gpii-express":              "git://github.com/the-t-in-rtf/gpii-express#102d082ec36ef46875670079abeb022d07ae3bcd",
-    "gpii-handlebars":           "git://github.com/the-t-in-rtf/gpii-handlebars.git#1f0409f51ce749a85c5e753c376faf16bf381720",
-    "gpii-json-schema":          "git://github.com/the-t-in-rtf/gpii-json-schema.git#bdcd5ca26a4004b5e3f192d4d7c5b15908470639",
-    "grunt":                     "0.4.4",
-    "grunt-shell":               "0.6.4",
-    "grunt-contrib-jshint":      "0.9.0",
-    "grunt-jsonlint":            "1.0.4",
-    "grunt-gpii":                "git://github.com/GPII/grunt-gpii.git#58ae055833f437a9e91baedb9f39a22c5fdd727f",
-    "infusion":                  "git://github.com/fluid-project/infusion.git#282f1a318718eed0b0ec060fb8b4ad254417fd7e"
+    "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#102d082ec36ef46875670079abeb022d07ae3bcd",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#1f0409f51ce749a85c5e753c376faf16bf381720",
+    "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#bdcd5ca26a4004b5e3f192d4d7c5b15908470639",
+    "grunt": "0.4.4",
+    "grunt-shell": "0.6.4",
+    "grunt-contrib-jshint": "0.9.0",
+    "grunt-jsonlint": "1.0.4",
+    "grunt-gpii": "git://github.com/GPII/grunt-gpii.git#58ae055833f437a9e91baedb9f39a22c5fdd727f",
+    "infusion": "git://github.com/fluid-project/infusion.git#282f1a318718eed0b0ec060fb8b4ad254417fd7e"
   },
   "devDependencies": {
+    "cookie": "^0.2.0",
     "gpii-mail-test": "git://github.com/the-t-in-rtf/gpii-mail-test.git#cb32c1891d6556c6481fbf0606f4ef8cddbb91e1",
-    "gpii-pouch":     "git://github.com/the-t-in-rtf/gpii-pouchdb.git#8807d10c4d33fc212958eb53366368fddfe5f7b5",
-    "jqUnit":         "git://github.com/fluid-project/node-jqUnit.git#d46bb932fa4069770852c51a92182939958f2d75",
-    "kettle":         "git://github.com/amb26/kettle.git#5859890a80794efe6797aed520efae39f8c66851",
-    "zombie":         "3.0.15"
+    "gpii-pouch": "git://github.com/the-t-in-rtf/gpii-pouchdb.git#8807d10c4d33fc212958eb53366368fddfe5f7b5",
+    "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#d46bb932fa4069770852c51a92182939958f2d75",
+    "kettle": "git://github.com/amb26/kettle.git#5859890a80794efe6797aed520efae39f8c66851",
+    "zombie": "3.0.15"
   }
 }

@@ -1,0 +1,16 @@
+{
+    "docs": [
+        {
+            "username": "sample",
+            "password": "secret",
+            "email":    "sample@sample.com",
+            "verified": true
+        },
+        {
+            "username": "unverified",
+            "password": "secret",
+            "email":    "unverified@sample.com",
+            "verified": false
+        }
+    ]
+}
