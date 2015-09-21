@@ -7,10 +7,8 @@ var gpii  = fluid.registerNamespace("gpii");
 require("../../src/js/server/session");
 
 require("gpii-express");
-require("gpii-pouch");
 
-var path = require("path");
-var userDataFile = path.resolve(__dirname, "../data/users.json");
+require("./test-harness-pouch");
 
 // Sample static router and handler.
 fluid.defaults("gpii.express.user.tests.helloHandler", {
@@ -52,13 +50,12 @@ fluid.defaults("gpii.express.user.tests.harness", {
     apiPort: "5379",
     events: {
         onPouchStarted: null,
-        onApiExpressStarted: null,
+        onApiStarted: null,
         onPouchExpressStarted: null,
         onStarted: {
             events: {
-                onPouchStarted:        "onPouchStarted",
-                onApiExpressStarted:   "onApiExpressStarted",
-                onPouchExpressStarted: "onPouchExpressStarted"
+                onPouchStarted: "onPouchStarted",
+                onApiStarted:   "onApiStarted"
             }
         }
     },
@@ -72,7 +69,7 @@ fluid.defaults("gpii.express.user.tests.harness", {
                     }
                 },
                 listeners: {
-                    onStarted: "{harness}.events.onApiExpressStarted.fire"
+                    onStarted: "{harness}.events.onApiStarted.fire"
                 },
                 components: {
                     // Required middleware
@@ -126,31 +123,11 @@ fluid.defaults("gpii.express.user.tests.harness", {
             }
         },
         pouch: {
-            type: "gpii.express",
+            type: "gpii.express.user.tests.pouch",
             options: {
-                config: {
-                    express: {
-                        port: "{harness}.options.pouchPort"
-                    }
-                },
+                pouchPort: "{harness}.options.pouchPort",
                 listeners: {
-                    onStarted: "{harness}.events.onPouchExpressStarted.fire"
-                },
-                components: {
-                    pouch: {
-                        type: "gpii.pouch",
-                        options: {
-                            path: "/",
-                            databases: {
-                                "users":   { "data": userDataFile }
-                            },
-                            listeners: {
-                                "onStarted.notifyParent": {
-                                    func: "{harness}.events.onPouchStarted.fire"
-                                }
-                            }
-                        }
-                    }
+                    onAllStarted: "{harness}.events.onPouchStarted.fire"
                 }
             }
         }

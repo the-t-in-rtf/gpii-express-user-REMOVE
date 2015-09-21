@@ -13,7 +13,7 @@ fluid.setLogging(true);
 var jqUnit = require("jqUnit");
 var cookie = require("cookie");
 
-require("./includes");
+require("./kettle-includes");
 require("./test-harness");
 
 require("../../node_modules/gpii-express/tests/js/lib/test-helpers");

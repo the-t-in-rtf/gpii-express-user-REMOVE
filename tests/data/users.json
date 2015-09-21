@@ -1,6 +1,7 @@
 {
     "docs": [
         {
+            "_id":      "sample",
             "username": "sample",
             "password": "secret",
             "email":    "sample@sample.com",
@@ -11,6 +12,16 @@
             "password": "secret",
             "email":    "unverified@sample.com",
             "verified": false
+        },
+        {
+            "_id":      "existing",
+            "username": "existing",
+            "password": "existing",
+            "email":    "existing@sample.com",
+            "verified": true
+        },
+        {
+            "_id": "TODO:  Add a view to lookup by username or email, and add to datasource tests"
         }
     ]
 }

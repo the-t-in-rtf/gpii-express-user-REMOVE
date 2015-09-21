@@ -8,7 +8,7 @@ var fluid  = fluid || require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
 var jqUnit = require("jqUnit");
 
-require("../../src/js/server/password");
+require("../../src/js/server/lib/password");
 
 fluid.registerNamespace("gpii.express.user.password.tests");
 gpii.express.user.password.tests.runTests = function (that) {
