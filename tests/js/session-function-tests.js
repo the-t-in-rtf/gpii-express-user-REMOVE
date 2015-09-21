@@ -1,6 +1,6 @@
 /*
 
-  Tests for the session persisting middleware and its static functions.
+  Tests for the static functions used by the session persisting middleware.
 
  */
 "use strict";
