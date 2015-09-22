@@ -27,11 +27,13 @@
     "grunt-jsonlint": "1.0.4",
     "grunt-shell": "0.6.4",
     "infusion": "git://github.com/fluid-project/infusion.git#a1e3d601478e57276d4143fca5bcbe00f9c6b0cd",
-    "marked": "^0.3.5"
+    "marked": "^0.3.5",
+    "nodemailer": "^1.4.0",
+    "nodemailer-smtp-transport": "^1.0.3"
   },
   "devDependencies": {
     "cookie": "^0.2.0",
-    "gpii-mail-test": "git://github.com/the-t-in-rtf/gpii-mail-test.git#cb32c1891d6556c6481fbf0606f4ef8cddbb91e1",
+    "gpii-mail-test": "git://github.com/GPII/gpii-mail-test.git#c615bfd0a9d94f5cc588f3fa3aa48987ffd786b9",
     "gpii-pouch": "git://github.com/the-t-in-rtf/gpii-pouchdb.git#8807d10c4d33fc212958eb53366368fddfe5f7b5",
     "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#d46bb932fa4069770852c51a92182939958f2d75",
     "kettle": "git://github.com/amb26/kettle.git#5859890a80794efe6797aed520efae39f8c66851",
