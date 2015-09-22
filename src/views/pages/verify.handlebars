@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title>Verification Page (used for client-side tests)</title>
+
+        {{>common-includes}}
+
+        <!-- Bring in client library being tested -->
+        <script type="text/javascript" src="/js/client/verify.js"></script>
+    </head>
+    <body>
+        <div class="row">
+            <div class="verify-viewport"></div>
+        </div>
+
+        {{{initBlock "gpii.express.couchuser.frontend.verify"}}}
+    </body>
+</html>
+
+

@@ -3,12 +3,18 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-//require("../../src/js/server/api");
+var path = require("path")
+var viewDir = path.resolve(__dirname, "../../src/views");
+
+require("../../src/js/server/api");
 require("../../src/js/server/session");
 
 require("gpii-express");
+require("gpii-handlebars");
 
 require("./test-harness-pouch");
+
+
 
 // Sample static router and handler.
 fluid.defaults("gpii.express.user.tests.helloHandler", {
@@ -65,42 +71,45 @@ fluid.defaults("gpii.express.user.tests.harness", {
             options: {
                 config: {
                     express: {
-                        port: "{harness}.options.apiPort"
+                        port:  "{harness}.options.apiPort",
+                        views: viewDir
                     }
                 },
                 listeners: {
                     onStarted: "{harness}.events.onApiStarted.fire"
                 },
                 components: {
-                    // Required middleware
-                    json: {
-                        type: "gpii.express.middleware.bodyparser.json"
-                    },
-                    urlencoded: {
-                        type: "gpii.express.middleware.bodyparser.urlencoded"
-                    },
-                    cookieparser: {
-                        type: "gpii.express.middleware.cookieparser"
-                    },
-                    session: {
-                        type: "gpii.express.middleware.session",
-                        options: {
-                            config: {
-                                express: {
-                                    session: {
-                                        secret: "Printer, printer take a hint-ter."
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    //// Required middleware
+                    //json: {
+                    //    type: "gpii.express.middleware.bodyparser.json"
+                    //},
+                    //urlencoded: {
+                    //    type: "gpii.express.middleware.bodyparser.urlencoded"
+                    //},
+                    //cookieparser: {
+                    //    type: "gpii.express.middleware.cookieparser"
+                    //},
+                    //session: {
+                    //    type: "gpii.express.middleware.session",
+                    //    options: {
+                    //        config: {
+                    //            express: {
+                    //                session: {
+                    //                    secret: "Printer, printer take a hint-ter."
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //},
 
-                    // Session persister
-                    persister: {
-                        type: "gpii.express.user.middleware.session"
+                    //// Session persister
+                    //persister: {
+                    //    type: "gpii.express.user.middleware.session"
+                    //},
+
+                    handlebars: {
+                        type: "gpii.express.hb"
                     },
-
-
                     // TODO:  We can get rid of this once the API component is ready
                     hello: {
                         type: "gpii.express.requestAware.router",
@@ -110,15 +119,15 @@ fluid.defaults("gpii.express.user.tests.harness", {
                         }
                     },
 
-                    // TODO: We can get rid of this once we figure out cookie handling
-                    cookieSetter: {
-                        type: "gpii.express.user.tests.cookieSetter"
-                    }
+                    //// TODO: We can get rid of this once we figure out cookie handling
+                    //cookieSetter: {
+                    //    type: "gpii.express.user.tests.cookieSetter"
+                    //},
 
                     // API
-                    //api: {
-                    //    type: "gpii.express.user.router"
-                    //}
+                    api: {
+                        type: "gpii.express.user.api"
+                    }
                 }
             }
         },

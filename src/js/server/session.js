@@ -1,3 +1,4 @@
+// TODO: Review and remove this once we confirm that req.session handles everything we need.
 /*
 
   Session middleware that automatically renews the session cookie on each request.  Should be loaded after

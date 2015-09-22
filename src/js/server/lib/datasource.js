@@ -47,6 +47,7 @@ gpii.express.user.couchdb.read.transformCouchResults = function (that, resp) {
 
 fluid.defaults("gpii.express.user.couchdb.read", {
     gradeNames: ["kettle.dataSource.URL"],
+    writable:   false,
     rules: {
         read: {
             "": ""
@@ -54,10 +55,10 @@ fluid.defaults("gpii.express.user.couchdb.read", {
     },
     listeners: {
         "onRead.transformCouchResults": {
-            funcName: "gpii.express.user.couchdb.read.transformCouchResults",
-            args: ["{that}", "{arguments}.0"],
+            funcName:  "gpii.express.user.couchdb.read.transformCouchResults",
+            args:      ["{that}", "{arguments}.0"],
             namespace: "gpii.express.user.couchdb",
-            priority: kettle.dataSource.priorities.CouchDB
+            priority:  kettle.dataSource.priorities.CouchDB
         }
     }
 });
@@ -77,12 +78,12 @@ fluid.registerNamespace("gpii.express.user.couchdb.writable");
 gpii.express.user.couchdb.writable.transformModelToCouch = function (that, model, options) {
     var jsonModel = typeof model === "string" ? JSON.parse(model) : model; // TODO: WHYYYYYYY?????
     var doc = fluid.model.transformWithRules(jsonModel, that.options.rules.write);
-    var original = that.reader.get(options.termMap, {filterNamespaces: ["JSON"]});
+    var original = that.reader.get(that.reader.options.directModel, {filterNamespaces: ["JSON"]});
     var togo = fluid.promise();
     original.then(function (originalDoc) {
         // We will always get a response even if the document is not found, so we have to check for more than just a value.
-        if (originalDoc && originalDoc._id && originalDoc._rev) {
-            doc._id = originalDoc._id;
+        if (originalDoc && !originalDoc.error && originalDoc._id && originalDoc._rev) {
+            doc._id  = originalDoc._id;
             doc._rev = originalDoc._rev;
         } else {
             options.writeMethod = "POST"; // returned out to URL dataSource handler
@@ -105,12 +106,24 @@ fluid.defaults("gpii.express.user.couchdb.writable", {
         }
     },
     urls: {
-        read:  "http://localhost:5984/ul/%id",
-        write: "http://localhost:5984/ul/%id"
-    },
-    termMap: {
+        read:  "",
+        write: ""
     },
     url: "{that}.options.urls.write",
+    termMaps: {
+        read: {
+            _id: "%_id"
+        },
+        write: {
+            _id: "%_id"
+        }
+    },
+    termMap: "{that}.options.termMaps.write",
+    directModels: {
+        read:  {},
+        write: {}
+    },
+    directModel: "{that}.options.directModels.write",
     listeners: {
         "onWrite.transformModelToCouch": {
             funcName:  "gpii.express.user.couchdb.writable.transformModelToCouch",
@@ -119,16 +132,25 @@ fluid.defaults("gpii.express.user.couchdb.writable", {
             priority:  kettle.dataSource.priorities.CouchDB
         },
         "onError.log": {
-            priority: 100,
-            funcName: "fluid.log",
-            args: ["There was an error in writing to couch:", "{arguments}.0"]
+            priority:  100,
+            funcName:  "fluid.log",
+            namespace: "gpii.express.user.couchdb",
+            args:      ["There was an error in writing to couch:", "{arguments}.0"]
         }
     },
+    events: {
+        onRead: null
+    },
     components: {
+        urlResolver: {
+            type: "kettle.dataSource.urlResolver"
+        },
         reader: {
             type: "gpii.express.user.couchdb.read",
             options: {
                 url: "{writable}.options.urls.read",
+                directModel: "{writable}.options.directModels.read",
+                termMap: "{writable}.options.termMaps.read",
                 rules: {
                     read: "{writable}.options.rules.read"
                 }

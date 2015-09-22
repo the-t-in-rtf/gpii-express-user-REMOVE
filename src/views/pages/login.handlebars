@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>Login Form (used for client-side tests)</title>
+
+        {{>common-includes}}
+
+        <!-- Bring in client libraries being tested -->
+        <script type="text/javascript" src="/js/client/login.js"></script>
+    </head>
+    <body>
+        <div class="controls-viewport"></div>
+        <div class="login-viewport"></div>
+
+        {{{initBlock "gpii.ul.hasUserControls" "gpii.express.couchuser.frontend.login"}}}
+    </body>
+</html>

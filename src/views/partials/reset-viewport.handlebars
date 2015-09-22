@@ -1,0 +1,21 @@
+<div class="column small-offset-4 small-4">
+    <div class="reset-success"></div>
+    <div class="reset-error"></div>
+
+    <p>Use the form below to reset your password.</p>
+
+    <form class="reset-form" method="POST">
+        <input type="hidden" name="code" value="{{req.query.code}}"/>
+
+        <div class="reset-password-message"></div>
+
+        <label for="password">New Password:</label>
+        <input id="password" type="password" tabindex="3" name="password">
+
+        <label for="confirm">Retype Password:</label>
+        <input id="confirm" type="password" tabindex="4" name="confirm">
+
+        <input type="submit" tabindex="5" class="button reset-button" value="Reset Password">
+    </form>
+</div>
+

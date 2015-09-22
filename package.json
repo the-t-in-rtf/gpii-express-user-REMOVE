@@ -22,11 +22,12 @@
     "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#1f0409f51ce749a85c5e753c376faf16bf381720",
     "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#bdcd5ca26a4004b5e3f192d4d7c5b15908470639",
     "grunt": "0.4.4",
-    "grunt-shell": "0.6.4",
     "grunt-contrib-jshint": "0.9.0",
-    "grunt-jsonlint": "1.0.4",
     "grunt-gpii": "git://github.com/GPII/grunt-gpii.git#58ae055833f437a9e91baedb9f39a22c5fdd727f",
-    "infusion": "git://github.com/fluid-project/infusion.git#a1e3d601478e57276d4143fca5bcbe00f9c6b0cd"
+    "grunt-jsonlint": "1.0.4",
+    "grunt-shell": "0.6.4",
+    "infusion": "git://github.com/fluid-project/infusion.git#a1e3d601478e57276d4143fca5bcbe00f9c6b0cd",
+    "marked": "^0.3.5"
   },
   "devDependencies": {
     "cookie": "^0.2.0",

@@ -1,13 +1,17 @@
 {
     "docs": [
         {
-            "_id":      "sample",
-            "username": "sample",
-            "password": "secret",
-            "email":    "sample@sample.com",
-            "verified": true
+            "_id":         "sample",
+            "type":        "user",
+            "username":    "sample",
+            "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
+            "salt":        "secret",
+            "iterations":  10,
+            "email":       "sample@sample.com",
+            "verified":    true
         },
         {
+            "type":     "user",
             "username": "unverified",
             "password": "secret",
             "email":    "unverified@sample.com",
@@ -15,13 +19,20 @@
         },
         {
             "_id":      "existing",
+            "type":     "user",
             "username": "existing",
             "password": "existing",
             "email":    "existing@sample.com",
             "verified": true
         },
         {
-            "_id": "TODO:  Add a view to lookup by username or email, and add to datasource tests"
+            "_id": "_design/lookup",
+            "description": "TODO:  Make this something that can be loaded sanely and which is tested...",
+            "views": {
+                "byUsernameOrEmail": {
+                    "map": "function (doc) {\n if (doc.type === 'user') { emit (doc.username, doc); \n emit (doc.email, doc); \n } \n}"
+                }
+            }
         }
     ]
 }

@@ -13,16 +13,19 @@ fluid.registerNamespace("gpii.express.api.docs.router");
 
 gpii.express.api.docs.router.route = function (that, req, res) {
     var markdown = fs.readFileSync(that.options.mdFile, {encoding: "utf8"});
-    res.render("pages/page", { "title": "API Documentation", "body": marked(markdown)});
+    res.render(that.options.template, { "title": that.options.title, "body": marked(markdown)});
 };
 
-fluid.defaults("gpii.api.docs.router", {
+fluid.defaults("gpii.express.api.docs.router", {
     gradeNames: ["gpii.express.router"],
     path:       "/",
+    method:     "get",
+    template:   "pages/docs",
+    title:      "API Documentation",
     mdFile:     mdFile,
     invokers: {
         route: {
-            funcName: "gpii.api.docs.router.route",
+            funcName: "gpii.express.api.docs.router.route",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"]
         }
     }
