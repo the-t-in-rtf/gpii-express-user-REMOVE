@@ -35,6 +35,17 @@ gpii.express.user.password.tests.runTests = function (that) {
         });
     });
 
+    jqUnit.test("Confirm that hashes are generated as expected...", function () {
+        var saltString = gpii.express.user.password.generateSalt(24);
+        jqUnit.assertEquals("The salt string should be of twice the byte length...", 48, saltString.length);
+
+        var saltInt = parseInt(saltString, 16);
+        jqUnit.assertNotEquals("The salt string should evaluate to a number when parsed as hex...", NaN, saltInt);
+
+        var secondSaltString = gpii.express.user.password.generateSalt(24);
+        jqUnit.assertNotEquals("A different salt should be returned each time...", saltString, secondSaltString);
+
+    });
 };
 
 fluid.defaults("gpii.express.user.password.tests", {

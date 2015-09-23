@@ -8,6 +8,7 @@
 
   Mail content is created using `gpii-handlebars`.
 
+  // TODO:  Evaluate moving this to its own package, perhaps combining with gpii-mail-test.
  */
 "use strict";
 var fluid = fluid || require("infusion");
@@ -15,6 +16,10 @@ var gpii  = fluid.registerNamespace("gpii");
 
 var nodemailer    = require("nodemailer");
 var smtpTransport = require("nodemailer-smtp-transport");
+
+var path        = require("path");
+var templateDir = path.resolve(__dirname, "../../src/templates");
+
 
 require("gpii-handlebars");
 require("./standaloneRenderer");
@@ -42,22 +47,7 @@ gpii.mailer.smtp.init = function (that) {
 // `mailOptions` can be found in [the nodemailer documentation](https://github.com/andris9/Nodemailer).
 //
 gpii.mailer.smtp.sendMessage = function (that, mailOptions) {
-    that.transport.sendMail(mailOptions, gpii.mailer.smtp.getResultHandler(that));
-};
-
-// This wrapper is necessary to avoid problems when a mail handler is destroyed before it is given a chance to handle
-// a response, as happens when using the test runner.
-//
-// TODO:  Review and discuss with Antranig.
-gpii.mailer.smtp.getResultHandler = function (that) {
-    return function (err, info) {
-        if (fluid.isDestroyed(that)) {
-            fluid.log("Attempted to handle send result after component was destroyed...");
-        }
-        else {
-            that.handleSendResult(err, info);
-        }
-    };
+    that.transport.sendMail(mailOptions, that.handleSendResult);
 };
 
 // When we know the results of sending the message, fire an appropriate event so that other components can take action.
@@ -132,6 +122,10 @@ fluid.registerNamespace("gpii.mailer.smtp.handlebars");
 gpii.mailer.smtp.handlebars.sendTemplateMessage = function (that, mailOptions, context) {
     var fullMailOptions = mailOptions ? mailOptions : {};
 
+    if (!that.options.textTemplateKey && !that.options.htmlTemplateKey) {
+        fluid.fail("Cannot generate email without a text and/or html mail template.  Check your configuration.");
+    }
+
     if (that.options.textTemplateKey) {
         var text = that.handlebars.render(that.options.textTemplateKey, context);
         fullMailOptions.text = text;
@@ -152,7 +146,10 @@ gpii.mailer.smtp.handlebars.sendTemplateMessage = function (that, mailOptions, c
 // 2. `options.htmlTemplateKey`: The template key for the HTML content of the email.
 //
 fluid.defaults("gpii.mailer.smtp.handlebars", {
-    gradeNames: ["gpii.mailer.smtp"],
+    gradeNames:      ["gpii.mailer.smtp"],
+    templateDir:     templateDir,
+    textTemplateKey: "email-text",
+    htmlTemplateKey: "email-html",
     invokers: {
         sendMessage: {
             funcName: "gpii.mailer.smtp.handlebars.sendTemplateMessage",

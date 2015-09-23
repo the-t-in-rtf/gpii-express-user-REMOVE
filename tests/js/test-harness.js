@@ -3,8 +3,8 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-var path = require("path")
-var viewDir = path.resolve(__dirname, "../../src/views");
+var path        = require("path");
+var templateDir = path.resolve(__dirname, "../../src/templates");
 
 require("../../src/js/server/api");
 require("../../src/js/server/session");
@@ -13,8 +13,6 @@ require("gpii-express");
 require("gpii-handlebars");
 
 require("./test-harness-pouch");
-
-
 
 // Sample static router and handler.
 fluid.defaults("gpii.express.user.tests.helloHandler", {
@@ -54,6 +52,18 @@ fluid.defaults("gpii.express.user.tests.harness", {
     gradeNames: ["fluid.component"],
     pouchPort:  "9735",
     apiPort: "5379",
+    apiUrl: {
+        expander: {
+            funcName: "fluid.stringTemplate",
+            args:     ["http://localhost:%port/", { port: "{that}.options.apiPort"}]
+        }
+    },
+    // As we may commonly be working with a debugger, we need a much longer timeout for all `requestAwareRouter` grades.
+    timeout: 99999999,
+    distributeOptions: {
+        source: "{that}.options.timeout",
+        target: "{that gpii.express.requestAware.router}.options.timeout"
+    },
     events: {
         onPouchStarted: null,
         onApiStarted: null,
@@ -72,7 +82,11 @@ fluid.defaults("gpii.express.user.tests.harness", {
                 config: {
                     express: {
                         port:  "{harness}.options.apiPort",
-                        views: viewDir
+                        views: templateDir
+                    },
+                    app: {
+                        name: "Express User Test Harness",
+                        url:  "{harness}.options.apiUrl"
                     }
                 },
                 listeners: {
@@ -126,7 +140,14 @@ fluid.defaults("gpii.express.user.tests.harness", {
 
                     // API
                     api: {
-                        type: "gpii.express.user.api"
+                        type: "gpii.express.user.api",
+                        options: {
+                            templateDir: templateDir,
+                            couch:  {
+                                port: "{harness}.options.pouchPort"
+                            },
+                            app: "{gpii.express}.options.config.app"
+                        }
                     }
                 }
             }

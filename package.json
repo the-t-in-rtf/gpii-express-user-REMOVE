@@ -30,7 +30,8 @@
     "infusion": "git://github.com/fluid-project/infusion.git#a1e3d601478e57276d4143fca5bcbe00f9c6b0cd",
     "marked": "^0.3.5",
     "nodemailer": "^1.4.0",
-    "nodemailer-smtp-transport": "^1.0.3"
+    "nodemailer-smtp-transport": "^1.0.3",
+    "request": "^2.63.0"
   },
   "devDependencies": {
     "cookie": "^0.2.0",

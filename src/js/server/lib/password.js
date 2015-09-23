@@ -24,3 +24,10 @@ gpii.express.user.password.encode = function (password, salt, iterations, keyLen
     var hexEncodedValue = crypto.pbkdf2Sync(password, salt, iterations, keyLength, digest);
     return hexEncodedValue.toString("hex");
 };
+
+// Return a hex string that represents byte data that is `lengthInBytes` length.  For example, `generateSalt(1)` might
+// return `c3`.
+//
+gpii.express.user.password.generateSalt = function (lengthInBytes) {
+    return crypto.randomBytes(lengthInBytes).toString("hex");
+};

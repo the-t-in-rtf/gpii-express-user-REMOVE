@@ -14,7 +14,7 @@ require("./docs.js");
 require("./login.js");
 require("./logout.js");
 //require("./reset.js");
-//require("./signup.js");
+require("./signup.js");
 //require("./verify.js");
 
 fluid.registerNamespace("gpii.express.user.api");
@@ -28,9 +28,14 @@ fluid.defaults("gpii.express.user.api", {
     path:       "/user",
     method:     "use",
     couch: {
-        url:      "http://localhost:5984/_users",
-        username: "admin",
-        password: "admin"
+        port:     "5984",
+        dbName:   "users",
+        url:      {
+            expander: {
+                funcName: "fluid.stringTemplate",
+                args:     ["http://localhost:%port/%dbName", "{that}.options.couch"] // If you need to enter a username and password, do it here in the template.
+            }
+        }
     },
     distributeOptions: {
         "source": "{that}.options.couch",
@@ -80,9 +85,13 @@ fluid.defaults("gpii.express.user.api", {
         //reset: {
         //    type: "gpii.express.user.api.reset"
         //},
-        //signup: {
-        //    type: "gpii.express.user.api.signup"
-        //},
+        signup: {
+            type: "gpii.express.user.api.signup",
+            options: {
+                templateDir: "{gpii.express.user.api}.options.templateDir",
+                app:          "{gpii.express.user.api}.options.app" // App name and URL (for template output)
+            }
+        },
         //verify: {
         //    type: "gpii.express.user.api.verify"
         //}

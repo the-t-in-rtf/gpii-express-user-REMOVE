@@ -1,0 +1,8 @@
+{
+    "_id": "_design/lookup",
+    "views": {
+        "byUsernameOrEmail": {
+            "map": "function (doc) {\n if (doc.type === 'user') { emit (doc.username); \n emit (doc.email); \n } \n}"
+        }
+    }
+}
