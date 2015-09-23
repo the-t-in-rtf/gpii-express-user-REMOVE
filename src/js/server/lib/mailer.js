@@ -22,22 +22,62 @@ require("gpii-mail-test");
 
 fluid.registerNamespace("gpii.mailer.smtp");
 
-// Initialize the handlers we use to send messages and run our sanity checks.
+// Initialize the transport we use to send messages.  See above for documentation of `options.transportOptions`.
 gpii.mailer.smtp.init = function (that) {
     that.transport = nodemailer.createTransport(smtpTransport(that.options.transportOptions));
 };
 
-gpii.mailer.smtp.sendMessage = function (that, options) {
-    that.transport.sendMail(options, that.handleSendResult);
+// Send a message using `nodemailer-smtp-transport`.  Here is a basic example of typical `mailOptions`:
+//
+// {
+//   from:    "sender@site1.com",
+//   to:      "recipient@site2.com",
+//   cc:      "overseer@site3.com",
+//   subject: "Sample subject...",
+//   text:    "Text body of the message.\n",
+//   html:    "<p>HTML body of the message.</p>\n"
+// }
+//
+// Note that the `to` and `cc` elements can also be passed an array of email addresses.  The full syntax available for
+// `mailOptions` can be found in [the nodemailer documentation](https://github.com/andris9/Nodemailer).
+//
+gpii.mailer.smtp.sendMessage = function (that, mailOptions) {
+    that.transport.sendMail(mailOptions, gpii.mailer.smtp.getResultHandler(that));
 };
 
-//gpii.mailer.smtp.sendTemplateMessage = function (that, options) {
-//    // TODO: Transform the payload
+// Transform a message using handlebars before sending it. If `options.templates.html` is found, the message will
+// include an html body.  If `options.templates.text` is found, the message will include a text body.  Both can be
+// used with the same message.
 //
-//    // TODO: Send the mail and report any problems
-//};
+// The `context` argument will be sent to handlebars and can be referenced using handlebars variables.  For example,
+// if you pass in `{ variable: "value" }` as the `context`, then `{{variable}}` would become `value` in the final
+// output.
+//
+gpii.mailer.smtp.sendTemplateMessage = function (that, options, context) {
+    // TODO: Transform the payload
 
+    // TODO: Send the mail and report any problems
+};
 
+// This wrapper is necessary to avoid problems when a mail handler is destroyed before it is given a chance to handle
+// a response, as happens when using the test runner.
+//
+// TODO:  Review and discuss with Antranig.
+gpii.mailer.smtp.getResultHandler = function (that) {
+    return function (err, info) {
+        if (fluid.isDestroyed(that)) {
+            fluid.log("Attempted to handle send result after component was destroyed...");
+        }
+        else {
+            that.handleSendResult(err, info);
+        }
+    };
+};
+
+// When we know the results of sending the message, fire an appropriate event so that other components can take action.
+// Fires an `onError` event if an error is received, and passes along the error message and stack.  If the message is
+// sent successfully, an `onSuccess` event is fired and the `info` object is passed along.
+//
 gpii.mailer.smtp.handleSendResult = function (that, err, info) {
     if (err) {
         that.events.onError.fire({ message: err.message, stack: err.stack});
@@ -50,6 +90,7 @@ gpii.mailer.smtp.handleSendResult = function (that, err, info) {
 fluid.defaults("gpii.mailer.smtp", {
     gradeNames: ["fluid.component"],
     transportOptions: {
+        ignoreTLS: true
     },
     events: {
         onError:   null,
