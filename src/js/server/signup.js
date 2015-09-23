@@ -31,6 +31,10 @@ gpii.express.user.api.signup.handler.checkForExistingUser = function (that, resp
     combinedRecord.derived_key           = derived_key;
     combinedRecord[that.options.codeKey] = code;
 
+    // Make sure we don't inadvertantly save the original password to the database.
+    delete combinedRecord.password;
+    delete combinedRecord.confirm;
+
     fluid.each(that.options.userDefaults, function (value, key) {
         combinedRecord[key] = value;
     });

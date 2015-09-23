@@ -15,7 +15,7 @@ require("./login.js");
 require("./logout.js");
 //require("./reset.js");
 require("./signup.js");
-//require("./verify.js");
+require("./verify.js");
 
 fluid.registerNamespace("gpii.express.user.api");
 
@@ -92,9 +92,9 @@ fluid.defaults("gpii.express.user.api", {
                 app:          "{gpii.express.user.api}.options.app" // App name and URL (for template output)
             }
         },
-        //verify: {
-        //    type: "gpii.express.user.api.verify"
-        //}
+        verify: {
+            type: "gpii.express.user.api.verify"
+        }
     },
     // We are a router that only has child components, so we wire the route invoker directly into our router.
     invokers: {

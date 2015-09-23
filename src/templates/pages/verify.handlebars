@@ -1,18 +1,18 @@
 <html>
     <head>
-        <title>Verification Page (used for client-side tests)</title>
+        <title>Verify Your Account</title>
 
         {{>common-includes}}
 
-        <!-- Bring in client library being tested -->
-        <script type="text/javascript" src="/js/client/verify.js"></script>
     </head>
     <body>
         <div class="row">
-            <div class="verify-viewport"></div>
+            <div class="column small-12">
+                <div class="alert-box {{#if ok}}success{{else}}alert{{/if}}">
+                    {{message}}
+                </div>
+            </div>
         </div>
-
-        {{{initBlock "gpii.express.couchuser.frontend.verify"}}}
     </body>
 </html>
 

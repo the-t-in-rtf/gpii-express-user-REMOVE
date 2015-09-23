@@ -14,6 +14,10 @@ require("gpii-handlebars");
 
 require("./test-harness-pouch");
 
+var bowerDir        = path.resolve(__dirname, "../../../bower_components");
+var srcDir          = path.resolve(__dirname, "../../../src");
+var modulesDir      = path.resolve(__dirname, "../../../node_modules");
+
 // Sample static router and handler.
 fluid.defaults("gpii.express.user.tests.helloHandler", {
     gradeNames: ["gpii.express.handler"],
@@ -58,12 +62,18 @@ fluid.defaults("gpii.express.user.tests.harness", {
             args:     ["http://localhost:%port/", { port: "{that}.options.apiPort"}]
         }
     },
-    // As we may commonly be working with a debugger, we need a much longer timeout for all `requestAwareRouter` grades.
+    // As we may commonly be working with a debugger, we need a much longer timeout for all `requestAwareRouter`  and `contentAware` grades.
     timeout: 99999999,
-    distributeOptions: {
-        source: "{that}.options.timeout",
-        target: "{that gpii.express.requestAware.router}.options.timeout"
-    },
+    distributeOptions: [
+        {
+            source: "{that}.options.timeout",
+            target: "{that gpii.express.requestAware.router}.options.timeout"
+        },
+        {
+            source: "{that}.options.timeout",
+            target: "{that gpii.express.contentAware.router}.options.timeout"
+        }
+    ],
     events: {
         onPouchStarted: null,
         onApiStarted: null,
@@ -137,6 +147,30 @@ fluid.defaults("gpii.express.user.tests.harness", {
                     //cookieSetter: {
                     //    type: "gpii.express.user.tests.cookieSetter"
                     //},
+
+
+                    // Front-end content used by some GET calls
+                    modules: {
+                        type:  "gpii.express.router.static",
+                        options: {
+                            path:    "/modules",
+                            content: modulesDir
+                        }
+                    },
+                    js: {
+                        type:  "gpii.express.router.static",
+                        options: {
+                            path:    "/js",
+                            content: srcDir
+                        }
+                    },
+                    bc: {
+                        type:  "gpii.express.router.static",
+                        options: {
+                            path:    "/bc",
+                            content: bowerDir
+                        }
+                    },
 
                     // API
                     api: {

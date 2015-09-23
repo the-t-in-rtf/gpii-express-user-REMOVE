@@ -11,28 +11,37 @@
             "verified":    true
         },
         {
-            "type":     "user",
-            "username": "unverified",
-            "password": "secret",
-            "email":    "unverified@sample.com",
-            "verified": false
+            "type":        "user",
+            "username":    "unverified",
+            "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
+            "salt":        "secret",
+            "iterations":  10,
+            "email":       "unverified@sample.com",
+            "verified":    false
         },
         {
-            "_id":      "existing",
-            "type":     "user",
-            "username": "existing",
-            "password": "existing",
-            "email":    "existing@sample.com",
-            "verified": true
+            "_id":         "existing",
+            "type":        "user",
+            "username":    "existing",
+            "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
+            "salt":        "secret",
+            "iterations":  10,
+            "email":       "existing@sample.com",
+            "verified":    true
         },
         {
-            "_id": "_design/lookup",
-            "description": "TODO:  Make this something that can be loaded sanely and which is tested...",
-            "views": {
-                "byUsernameOrEmail": {
-                    "map": "function (doc) {\n if (doc.type === 'user') { emit (doc.username, doc); \n emit (doc.email, doc); \n } \n}"
-                }
+          "_id": "_design/lookup",
+          "views": {
+            "byUsernameOrEmail": {
+              "map": "function (doc) {\n if (doc.type === 'user') { emit (doc.username, doc); \n emit (doc.email, doc); \n } \n}"
+            },
+            "byVerificationCode": {
+              "map": "function (doc) {\n if (doc.verification_code) { emit(doc.verification_code, doc); \n } \n}"
+            },
+            "byResetCode": {
+              "map": "function (doc) {\n if (doc.reset_code) { emit(doc.reset_code, doc); \n } \n}"
             }
+          }
         }
     ]
 }
