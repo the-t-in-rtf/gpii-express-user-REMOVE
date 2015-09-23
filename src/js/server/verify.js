@@ -32,14 +32,14 @@ gpii.express.user.api.verify.handler.checkVerificationCode = function (that, dat
             url:    writeUrl,
             json:   true,
             method: "PUT",
-            data:   updatedUserRecord
+            body:   updatedUserRecord
         };
         request(writeOptions, function (error, response, body) {
             if (error) {
                 that.sendFinalResponse(500, { ok: false, message: error});
             }
             else if ([201, 200].indexOf(response.statusCode) === -1) {
-                that.sendFinalResponse(401, { ok: false, message: body});
+                that.sendFinalResponse(response.statusCode, { ok: false, message: body});
             }
             else {
                 that.sendFinalResponse(200, { ok: true, message: "Your account has been verified.  You can now log in."});
