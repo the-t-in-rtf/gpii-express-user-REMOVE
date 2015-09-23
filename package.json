@@ -37,6 +37,7 @@
     "gpii-pouch": "git://github.com/the-t-in-rtf/gpii-pouchdb.git#8807d10c4d33fc212958eb53366368fddfe5f7b5",
     "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#d46bb932fa4069770852c51a92182939958f2d75",
     "kettle": "git://github.com/amb26/kettle.git#5859890a80794efe6797aed520efae39f8c66851",
+    "mailparser": "^0.5.2",
     "zombie": "3.0.15"
   }
 }
