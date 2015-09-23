@@ -22,7 +22,8 @@ require("gpii-mail-test");
 
 fluid.registerNamespace("gpii.mailer.smtp");
 
-// Initialize the transport we use to send messages.  See above for documentation of `options.transportOptions`.
+// Initialize the transport we use to send messages and our rendering engine.  See above for documentation of
+// `options.transportOptions`.
 gpii.mailer.smtp.init = function (that) {
     that.transport = nodemailer.createTransport(smtpTransport(that.options.transportOptions));
 };
@@ -99,7 +100,11 @@ fluid.defaults("gpii.mailer.smtp", {
     invokers: {
         sendMessage: {
             funcName: "gpii.mailer.smtp.sendMessage",
-            args:     ["{that}", "{arguments}.0"] // data to plug into our template in preparing the outgoing messages.
+            args:     ["{that}", "{arguments}.0"] // Accepts options to pass to nodemailer's `sendMail` function.
+        },
+        sendTemplateMessage: {
+            funcName: "gpii.mailer.smtp.sendMessage",
+            args:     ["{that}", "{arguments}.0", "{arguments}.1"] // `sendMail` options, data used in rendering template content.
         },
         handleSendResult: {
             funcName: "gpii.mailer.smtp.handleSendResult",
@@ -121,8 +126,8 @@ fluid.defaults("gpii.mailer.smtp", {
         }
     },
     components: {
-        //handlebars: {
-        //    type: ""
-        //}
+        handlebars: {
+            type: ""
+        }
     }
 });
