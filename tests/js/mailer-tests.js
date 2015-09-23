@@ -5,9 +5,13 @@ var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
 var fs         = require("fs");
+var path       = require("path");
 var jqUnit     = require("jqUnit");
 var MailParser = require("mailparser").MailParser;
 
+var templateDir = path.resolve(__dirname, "../templates");
+
+require("gpii-mail-test");
 require("./kettle-includes");
 
 require("../../src/js/server/lib/mailer");
@@ -48,6 +52,13 @@ fluid.defaults("gpii.mailer.tests.caseHolder", {
             to:      [ { address: "other@localhost",  name: "" }],
             subject: "sample text message...",
             text:    "This is a sample message body."
+        },
+        templateMessage: {
+            from:    [ { address: "sample@localhost", name: "" }],
+            to:      [ { address: "other@localhost",  name: "" }],
+            subject: "sample template message...",
+            text:    "I am convincingly and customizably happy to be writing you.",
+            html:    "I am convincingly and customizably <p><em>happy</em></p> to be writing you."
         }
     },
     messages: {
@@ -56,7 +67,15 @@ fluid.defaults("gpii.mailer.tests.caseHolder", {
             to:      "other@localhost",
             subject: "sample text message...",
             text:    "This is a sample message body."
+        },
+        templateMessage: {
+            from:    "sample@localhost",
+            to:      "other@localhost",
+            subject: "sample template message..."
         }
+    },
+    templateMessageContext: {
+        variable: "convincingly and customizably"
     },
     rawModules: [
         {
@@ -75,21 +94,46 @@ fluid.defaults("gpii.mailer.tests.caseHolder", {
                             args:  ["{arguments}.0", "{caseHolder}.options.expected.textMessage"]
                         }
                     ]
+                },
+                {
+                    name: "Test sending a template message...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{templateMailer}.sendMessage",
+                            args: ["{caseHolder}.options.messages.templateMessage", "{caseHolder}.options.templateMessageContext"]
+                        },
+                        {
+                            listener: "gpii.mailer.tests.checkResponse",
+                            event: "{testEnvironment}.events.onMessageReceived",
+                            args:  ["{arguments}.0", "{caseHolder}.options.expected.templateMessage"]
+                        }
+                    ]
                 }
             ]
         }
     ],
     components: {
         textMailer: {
-            type: "gpii.mailer.smtp",
+            type: "gpii.mailer.smtp.text",
             options: {
                 transportOptions: {
                     port: "{testEnvironment}.options.mailPort"
                 }
             }
+        },
+        templateMailer: {
+            type: "gpii.mailer.smtp.handlebars",
+            options: {
+                transportOptions: {
+                    port: "{testEnvironment}.options.mailPort"
+                },
+                templateDir: templateDir,
+                textTemplateKey: "mail-text",
+                htmlTemplateKey: "mail-html"
+            }
         }
     }
-
 });
 
 fluid.defaults("gpii.mailer.tests.environment", {

@@ -17,8 +17,7 @@ var nodemailer    = require("nodemailer");
 var smtpTransport = require("nodemailer-smtp-transport");
 
 require("gpii-handlebars");
-
-require("gpii-mail-test");
+require("./standaloneRenderer");
 
 fluid.registerNamespace("gpii.mailer.smtp");
 
@@ -44,20 +43,6 @@ gpii.mailer.smtp.init = function (that) {
 //
 gpii.mailer.smtp.sendMessage = function (that, mailOptions) {
     that.transport.sendMail(mailOptions, gpii.mailer.smtp.getResultHandler(that));
-};
-
-// Transform a message using handlebars before sending it. If `options.templates.html` is found, the message will
-// include an html body.  If `options.templates.text` is found, the message will include a text body.  Both can be
-// used with the same message.
-//
-// The `context` argument will be sent to handlebars and can be referenced using handlebars variables.  For example,
-// if you pass in `{ variable: "value" }` as the `context`, then `{{variable}}` would become `value` in the final
-// output.
-//
-gpii.mailer.smtp.sendTemplateMessage = function (that, options, context) {
-    // TODO: Transform the payload
-
-    // TODO: Send the mail and report any problems
 };
 
 // This wrapper is necessary to avoid problems when a mail handler is destroyed before it is given a chance to handle
@@ -99,12 +84,7 @@ fluid.defaults("gpii.mailer.smtp", {
     },
     invokers: {
         sendMessage: {
-            funcName: "gpii.mailer.smtp.sendMessage",
-            args:     ["{that}", "{arguments}.0"] // Accepts options to pass to nodemailer's `sendMail` function.
-        },
-        sendTemplateMessage: {
-            funcName: "gpii.mailer.smtp.sendMessage",
-            args:     ["{that}", "{arguments}.0", "{arguments}.1"] // `sendMail` options, data used in rendering template content.
+            funcName: "fluid.notImplemented"
         },
         handleSendResult: {
             funcName: "gpii.mailer.smtp.handleSendResult",
@@ -124,10 +104,67 @@ fluid.defaults("gpii.mailer.smtp", {
             funcName: "fluid.log",
             args:     ["Message transmitted:", "{arguments}.0"]
         }
+    }
+});
+
+// Mailer for use with plain text content.
+fluid.defaults("gpii.mailer.smtp.text", {
+    gradeNames: ["gpii.mailer.smtp"],
+    invokers: {
+        sendMessage: {
+            funcName: "gpii.mailer.smtp.sendMessage",
+            args:     ["{that}", "{arguments}.0"] // Options to pass to nodemailer's `sendMail` function.
+        }
+    }
+});
+
+
+fluid.registerNamespace("gpii.mailer.smtp.handlebars");
+
+// Transform a message using handlebars before sending it. If `options.templates.html` is found, the message will
+// include an html body.  If `options.templates.text` is found, the message will include a text body.  Both can be
+// used with the same message.
+//
+// The `context` argument will be sent to handlebars and can be referenced using handlebars variables.  For example,
+// if you pass in `{ variable: "value" }` as the `context`, then `{{variable}}` would become `value` in the final
+// output.
+//
+gpii.mailer.smtp.handlebars.sendTemplateMessage = function (that, mailOptions, context) {
+    var fullMailOptions = mailOptions ? mailOptions : {};
+
+    if (that.options.textTemplateKey) {
+        var text = that.handlebars.render(that.options.textTemplateKey, context);
+        fullMailOptions.text = text;
+    }
+
+    if (that.options.htmlTemplateKey) {
+        var html = that.handlebars.render(that.options.htmlTemplateKey, context);
+        fullMailOptions.html = html;
+    }
+
+    gpii.mailer.smtp.sendMessage(that, fullMailOptions);
+};
+
+// Mailer with support for template rendering.  Requires you to set `options.templateDir`.  To use this meaningfully, you
+// need to specify one or both of:
+//
+// 1. `options.textTemplateKey`: The template key for the text content of the email.
+// 2. `options.htmlTemplateKey`: The template key for the HTML content of the email.
+//
+fluid.defaults("gpii.mailer.smtp.handlebars", {
+    gradeNames: ["gpii.mailer.smtp"],
+    invokers: {
+        sendMessage: {
+            funcName: "gpii.mailer.smtp.handlebars.sendTemplateMessage",
+            args:     ["{that}", "{arguments}.0", "{arguments}.1"] // `sendMail` options, data used in rendering template content.
+        }
     },
     components: {
         handlebars: {
-            type: ""
+            type: "gpii.handlebars.standaloneRenderer",
+            options: {
+                templateDir: "{gpii.mailer.smtp.handlebars}.options.templateDir"
+            }
         }
     }
 });

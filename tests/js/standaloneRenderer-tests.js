@@ -8,7 +8,7 @@ require("../../src/js/server/lib/standaloneRenderer");
 var jqUnit = require("jqUnit");
 var path   = require("path");
 
-var viewDir = path.resolve(__dirname, "../templates");
+var templateDir = path.resolve(__dirname, "../templates");
 
 fluid.registerNamespace("gpii.handlebars.tests.standaloneRenderer");
 gpii.handlebars.tests.standaloneRenderer.runTests = function (that) {
@@ -71,7 +71,7 @@ fluid.defaults("gpii.handlebars.tests.standaloneRenderer", {
         renderer: {
             type: "gpii.handlebars.standaloneRenderer",
             options: {
-                viewDir: viewDir
+                templateDir: templateDir
             }
         }
     }

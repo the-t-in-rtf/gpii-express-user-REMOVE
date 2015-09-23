@@ -7,8 +7,8 @@
 //
 // The directory conventions used with express are partially supported, as follows:
 //
-//  1. Any templates in the `partials` subdirectory relative to `options.viewDir` will be registered as partials for use in `{{>partial}}` statements.
-//  2. All other templates are expected to be stored in a `pages` subdirectory relative to `options.viewDir`.
+//  1. Any templates in the `partials` subdirectory relative to `options.templateDir` will be registered as partials for use in `{{>partial}}` statements.
+//  2. All other templates are expected to be stored in a `pages` subdirectory relative to `options.templateDir`.
 //
 "use strict";
 var fluid = fluid || require("infusion");
@@ -32,12 +32,12 @@ gpii.handlebars.standaloneRenderer.addHelper = function (that, component) {
 };
 
 gpii.handlebars.standaloneRenderer.init = function (that) {
-    if (!that.options.viewDir) {
-        fluid.fail("Cannot initialize template handling without a 'viewDir' option...");
+    if (!that.options.templateDir) {
+        fluid.fail("Cannot initialize template handling without a 'templateDir' option...");
     }
     else {
-        // Register all partials found in the "partials" subdirectory relative to `options.viewDir`;
-        var partialDir = path.resolve(that.options.viewDir, "partials");
+        // Register all partials found in the "partials" subdirectory relative to `options.templateDir`;
+        var partialDir = path.resolve(that.options.templateDir, "partials");
         fluid.each(fs.readdirSync(partialDir), function (filename) {
             var partialPath = path.resolve(partialDir, filename);
             var partialContent = fs.readFileSync(partialPath, "utf8");
@@ -54,7 +54,7 @@ gpii.handlebars.standaloneRenderer.init = function (that) {
 
 gpii.handlebars.standaloneRenderer.render = function (that, templateKey, context) {
     if (!that.compiledTemplates[templateKey]) {
-        var templatePath = path.resolve(that.options.viewDir, "./pages", templateKey + that.options.handlebarsSuffix);
+        var templatePath = path.resolve(that.options.templateDir, "./pages", templateKey + that.options.handlebarsSuffix);
         var templateContent = fs.readFileSync(templatePath, "utf8");
         that.compiledTemplates[templateKey] = Handlebars.compile(templateContent);
     }
