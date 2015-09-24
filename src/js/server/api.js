@@ -10,7 +10,7 @@ var gpii  = fluid.registerNamespace("gpii");
 require("gpii-express");
 require("./current.js");
 require("./docs.js");
-//require("./forgot.js");
+require("./forgot.js");
 require("./login.js");
 require("./logout.js");
 //require("./reset.js");
@@ -40,15 +40,15 @@ fluid.defaults("gpii.express.user.api", {
     distributeOptions: [
         {
             "source": "{that}.options.couch",
-            "target": "{that > gpii.express.router}.options.couch"
+            "target": "{that gpii.express.router}.options.couch"
         },
         {
             source: "{that}.options.templateDir",
-            target: "{that > gpii.express.router}.options.templateDir"
+            target: "{that gpii.express.router}.options.templateDir"
         },
         {
             source: "{that}.options.app",
-            target: "{that > gpii.express.router}.options.app"
+            target: "{that gpii.express.router}.options.app"
         }
     ],
     components: {
@@ -83,9 +83,9 @@ fluid.defaults("gpii.express.user.api", {
         current: {
             type: "gpii.express.user.api.current"
         },
-        //forgot: {
-        //    type: "gpii.express.user.api.forgot"
-        //},
+        forgot: {
+            type: "gpii.express.user.api.forgot"
+        },
         login: {
             type: "gpii.express.user.api.login"
         },

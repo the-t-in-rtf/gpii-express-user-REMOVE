@@ -1,0 +1,95 @@
+@font-face {
+    font-family: 'user-icons';
+    src:url('../fonts/user-icons.eot?-92akbs');
+    src:url('../fonts/user-icons.eot?#iefix-92akbs') format('embedded-opentype'),
+    url('../fonts/user-icons.woff?-92akbs') format('woff'),
+    url('../fonts/user-icons.ttf?-92akbs') format('truetype'),
+    url('../fonts/user-icons.svg?-92akbs#user-icons') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="user-icon-"], [class*=" user-icon-"] {
+    font-family: 'user-icons';
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Enable Ligatures ================ */
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga=1";
+    -moz-font-feature-settings: "liga";
+    -ms-font-feature-settings: "liga" 1;
+    -o-font-feature-settings: "liga";
+    font-feature-settings: "liga";
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.user-icon-leaf:before {
+    content: "\e636";
+}
+.user-icon-unchecked:before {
+    content: "\e637";
+}
+.user-icon-checked:before {
+    content: "\e638";
+}
+.user-icon-alert:before {
+    content: "\e639";
+}
+.user-icon-condition:before {
+    content: "\e63a";
+}
+.user-icon-cross:before {
+    content: "\e63b";
+}
+.user-icon-term:before {
+    content: "\e63d";
+}
+.user-icon-pencil:before {
+    content: "\e644";
+}
+.user-icon-add:before {
+    content: "\e65f";
+}
+.user-icon-help:before {
+    content: "\e648";
+}
+.user-icon-link:before {
+    content: "\e64c";
+}
+.user-icon-user:before {
+    content: "\e661";
+}
+.user-icon-end:before {
+    content: "\e60a";
+}
+.user-icon-next:before {
+    content: "\e60b";
+}
+.user-icon-previous:before {
+    content: "\e60c";
+}
+.user-icon-start:before {
+    content: "\e60d";
+}
+.user-icon-trash:before {
+    content: "\e608";
+}
+.user-icon-language:before {
+    content: "\e600";
+}
+.user-icon-arrow-less:before {
+    content: "\e601";
+}
+.user-icon-arrow-more:before {
+    content: "\e602";
+}
+.user-icon-radio-checked:before {
+    content: "\e609";
+}

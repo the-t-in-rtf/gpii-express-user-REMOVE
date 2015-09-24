@@ -1,0 +1,38 @@
+/* example CSS file with handles for all classes used in the controls (only those used in the demos are uncommented). */
+.user-menu {
+    margin-top: 0px;
+    border: 1px solid #cccccc;
+    position: absolute;
+    top: 3em;
+    z-index: 999;
+    width: 88%;
+}
+
+.user-menu ul {
+    padding:0px;
+    margin: 0px;
+    list-style-type: none;
+}
+
+.user-menu li {
+    list-style: none;
+    padding: .75em;
+    margin: 0px;
+}
+
+.user-menu li:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+.user-controls-toggle::after {
+    border-color: #000000 transparent transparent transparent;
+    border-style: solid;
+    content: "";
+    display: block;
+    height: 0;
+    position: absolute;
+    top: 30%;
+    right: 10%;
+    border-width: .4em;
+    width: 0;
+}

@@ -19,7 +19,7 @@
   "homepage": "https://github.com/the-t-in-rtf/gpii-express-user",
   "dependencies": {
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#102d082ec36ef46875670079abeb022d07ae3bcd",
-    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#1f0409f51ce749a85c5e753c376faf16bf381720",
+    "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#adf891492918fa4142c6277e9969a5b8db12110b",
     "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#bdcd5ca26a4004b5e3f192d4d7c5b15908470639",
     "grunt": "0.4.4",
     "grunt-contrib-jshint": "0.9.0",

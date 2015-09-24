@@ -15,7 +15,7 @@ require("gpii-handlebars");
 require("./test-harness-pouch");
 
 var bowerDir        = path.resolve(__dirname, "../../bower_components");
-var srcDir          = path.resolve(__dirname, "../../src/js");
+var srcDir          = path.resolve(__dirname, "../../src");
 var modulesDir      = path.resolve(__dirname, "../../node_modules");
 
 // Sample static router and handler.
@@ -157,13 +157,6 @@ fluid.defaults("gpii.express.user.tests.harness", {
                             content: modulesDir
                         }
                     },
-                    js: {
-                        type:  "gpii.express.router.static",
-                        options: {
-                            path:    "/js",
-                            content: srcDir
-                        }
-                    },
                     bc: {
                         type:  "gpii.express.router.static",
                         options: {
@@ -171,16 +164,31 @@ fluid.defaults("gpii.express.user.tests.harness", {
                             content: bowerDir
                         }
                     },
+                    inline: {
+                        type: "gpii.express.hb.inline",
+                        options: {
+                            path: "/hbs"
+                        }
+                    },
 
-                    // API
                     api: {
                         type: "gpii.express.user.api",
                         options: {
+                            path:        "/api/user",
                             templateDir: templateDir,
                             couch:  {
                                 port: "{harness}.options.pouchPort"
                             },
                             app: "{gpii.express}.options.config.app"
+                        }
+                    },
+
+                    // Serve up the rest of our static content (JS source, etc.)
+                    src: {
+                        type:  "gpii.express.router.static",
+                        options: {
+                            path:    "/",
+                            content: srcDir
                         }
                     }
                 }
