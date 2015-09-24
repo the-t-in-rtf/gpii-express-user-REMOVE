@@ -37,10 +37,20 @@ fluid.defaults("gpii.express.user.api", {
             }
         }
     },
-    distributeOptions: {
-        "source": "{that}.options.couch",
-        "target": "{that > gpii.express.router}.options.couch"
-    },
+    distributeOptions: [
+        {
+            "source": "{that}.options.couch",
+            "target": "{that > gpii.express.router}.options.couch"
+        },
+        {
+            source: "{that}.options.templateDir",
+            target: "{that > gpii.express.router}.options.templateDir"
+        },
+        {
+            source: "{that}.options.app",
+            target: "{that > gpii.express.router}.options.app"
+        }
+    ],
     components: {
         // Required middleware
         json: {
@@ -86,11 +96,7 @@ fluid.defaults("gpii.express.user.api", {
         //    type: "gpii.express.user.api.reset"
         //},
         signup: {
-            type: "gpii.express.user.api.signup",
-            options: {
-                templateDir: "{gpii.express.user.api}.options.templateDir",
-                app:          "{gpii.express.user.api}.options.app" // App name and URL (for template output)
-            }
+            type: "gpii.express.user.api.signup"
         },
         verify: {
             type: "gpii.express.user.api.verify"
