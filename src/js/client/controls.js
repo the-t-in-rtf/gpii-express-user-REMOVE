@@ -4,9 +4,9 @@
 (function ($) {
     "use strict";
     var gpii = fluid.registerNamespace("gpii");
-    fluid.registerNamespace("gpii.express.couchuser.frontend.controls");
+    fluid.registerNamespace("gpii.express.user.frontend.controls");
 
-    gpii.express.couchuser.frontend.controls.handleMenuKeys = function (that, event) {
+    gpii.express.user.frontend.controls.handleMenuKeys = function (that, event) {
         switch (event.keyCode) {
             case 27: // escape
                 that.toggleMenu();
@@ -16,7 +16,7 @@
         // TODO:  Eventually, we may want to take over control of "natural" arrow key handling using event.preventDefault()
     };
 
-    gpii.express.couchuser.frontend.controls.handleToggleKeys = function (that, event) {
+    gpii.express.user.frontend.controls.handleToggleKeys = function (that, event) {
         switch (event.keyCode) {
             case 27: // escape
                 that.toggleMenu();
@@ -27,7 +27,7 @@
         }
     };
 
-    gpii.express.couchuser.frontend.controls.handleLogoutKeys = function (that, event) {
+    gpii.express.user.frontend.controls.handleLogoutKeys = function (that, event) {
         switch (event.keyCode) {
             case 13: // enter
                 that.submitForm(event);
@@ -35,7 +35,7 @@
         }
     };
 
-    gpii.express.couchuser.frontend.controls.toggleMenu = function (that) {
+    gpii.express.user.frontend.controls.toggleMenu = function (that) {
         var toggle = that.locate("toggle");
         var menu   = that.locate("menu");
 
@@ -49,7 +49,7 @@
         }
     };
 
-    fluid.defaults("gpii.express.couchuser.frontend.controls", {
+    fluid.defaults("gpii.express.user.frontend.controls", {
         gradeNames: ["gpii.templates.templateFormControl"],
         container:  ".controls-viewport",
         ajaxOptions: {
@@ -89,15 +89,15 @@
         },
         invokers: {
             toggleMenu: {
-                funcName: "gpii.express.couchuser.frontend.controls.toggleMenu",
+                funcName: "gpii.express.user.frontend.controls.toggleMenu",
                 args:     [ "{that}"]
             },
             handleMenuKeys: {
-                funcName: "gpii.express.couchuser.frontend.controls.handleMenuKeys",
+                funcName: "gpii.express.user.frontend.controls.handleMenuKeys",
                 args:     [ "{that}", "{arguments}.0"]
             },
             handleToggleKeys: {
-                funcName: "gpii.express.couchuser.frontend.controls.handleToggleKeys",
+                funcName: "gpii.express.user.frontend.controls.handleToggleKeys",
                 args:     [ "{that}", "{arguments}.0"]
             }
         },
@@ -137,7 +137,7 @@
         gradeNames: ["fluid.modelComponent"],
         components: {
             controls: {
-                type:      "gpii.express.couchuser.frontend.controls",
+                type:      "gpii.express.user.frontend.controls",
                 container: ".controls-viewport",
                 options: {
                     model: {

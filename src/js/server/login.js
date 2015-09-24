@@ -2,7 +2,7 @@
 var fluid  = fluid || require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
 
-fluid.registerNamespace("gpii.express.user.api.login.handler");
+fluid.registerNamespace("gpii.express.user.api.login.post.handler");
 
 //var path = require("path");
 //var fs   = require("fs");
@@ -10,10 +10,7 @@ fluid.registerNamespace("gpii.express.user.api.login.handler");
 require("gpii-json-schema");
 require("./lib/datasource");
 require("./lib/password");
-
-gpii.express.user.api.login.handler.handleRequest = function (that) {
-    that.reader.get(that.request.body);
-};
+require("./lib/passthroughRouter");
 
 //var loginSchemaContents = require("../../schemas/user-login.json");
 //
@@ -35,7 +32,7 @@ gpii.express.user.api.login.handler.handleRequest = function (that) {
 //var schemaFiles = gpii.express.user.api.login.getSchemaFiles(path.resolve(__dirname, "../../schemas"));
 
 // TODO:  Make this content aware and serve up the login form by default.
-gpii.express.user.api.login.handler.verifyPassword = function (that, response) {
+gpii.express.user.api.login.post.handler.verifyPassword = function (that, response) {
     if (that.request.body && that.request.body.username && that.request.body.password && response.salt && response.derived_key) {
         var encodedPassword = gpii.express.user.password.encode(that.request.body.password, response.salt, response.iterations, response.keyLength, response.digest);
         if (encodedPassword === response.derived_key) {
@@ -50,7 +47,7 @@ gpii.express.user.api.login.handler.verifyPassword = function (that, response) {
     that.sendResponse(401, { ok: false, message: "Invalid username or password."});
 };
 
-fluid.defaults("gpii.express.user.api.login.handler", {
+fluid.defaults("gpii.express.user.api.login.post.handler", {
     gradeNames: ["gpii.schema.handler"],
     schemaKey:  "message-core",
     schemaUrl:  "/schemas/message-core",
@@ -74,7 +71,7 @@ fluid.defaults("gpii.express.user.api.login.handler", {
         reader: {
             type: "gpii.express.user.couchdb.read",
             options: {
-                url: "{gpii.express.user.api.login.handler}.options.url",
+                url: "{gpii.express.user.api.login.post.handler}.options.url",
                 rules: {
                     read: {
                         "": "rows.0.value"
@@ -85,11 +82,11 @@ fluid.defaults("gpii.express.user.api.login.handler", {
                     "onRead.verifyPassword": {
                         nameSpace: "gpii.express.user.api.login",
                         priority:  "last",
-                        funcName:  "gpii.express.user.api.login.handler.verifyPassword",
-                        args:      ["{gpii.express.user.api.login.handler}", "{arguments}.0"]
+                        funcName:  "gpii.express.user.api.login.post.handler.verifyPassword",
+                        args:      ["{gpii.express.user.api.login.post.handler}", "{arguments}.0"]
                     },
                     "onError.sendErrorResponse": {
-                        func: "{gpii.express.user.api.login.handler}.sendResponse",
+                        func: "{gpii.express.user.api.login.post.handler}.sendResponse",
                         args: [500, { ok: false, message: "Error checking username and password."}]
                     }
                 }
@@ -98,11 +95,12 @@ fluid.defaults("gpii.express.user.api.login.handler", {
     }
 });
 
-fluid.defaults("gpii.express.user.api.login", {
+fluid.defaults("gpii.express.user.api.login.post", {
     gradeNames: ["gpii.express.requestAware.router"],
-    path:       "/login",
+    path:       "/",
     method:     "post",
-    handlerGrades: ["gpii.express.user.api.login.handler"],
+    handlerGrades: ["gpii.express.user.api.login.post.handler"],
+    // TODO:  set up and test Schema middleware blocking
     components: {
         //schemaMiddleware: {
         //    type: "gpii.schema.middleware",
@@ -115,5 +113,37 @@ fluid.defaults("gpii.express.user.api.login", {
         //        }
         //    }
         //},
+    }
+});
+
+fluid.registerNamespace("gpii.express.user.api.login.get");
+gpii.express.user.api.forgot.get.renderForm = function (that, request, response) {
+    response.status(200).render(that.options.templateKey, that.options.defaultContext);
+};
+
+fluid.defaults("gpii.express.user.api.login.get", {
+    gradeNames:      ["gpii.express.router"],
+    path:            "/",
+    method:          "get",
+    defaultContext:  {},
+    templateKey:     "pages/login",
+    invokers: {
+        route: {
+            funcName: "gpii.express.user.api.forgot.get.renderForm",
+            args:     ["{that}", "{arguments}.0", "{arguments}.1"] // request, response
+        }
+    }
+});
+
+fluid.defaults("gpii.express.user.api.login", {
+    gradeNames: ["gpii.express.router.passthrough"],
+    path:       "/login",
+    components: {
+        getRouter: {
+            type: "gpii.express.user.api.login.get"
+        },
+        postRouter: {
+            type: "gpii.express.user.api.login.post"
+        }
     }
 });

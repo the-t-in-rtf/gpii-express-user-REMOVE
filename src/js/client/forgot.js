@@ -2,8 +2,8 @@
 /* global fluid, jQuery */
 (function () {
     "use strict";
-    fluid.defaults("gpii.express.couchuser.frontend.forgot", {
-        gradeNames: ["gpii.express.couchuser.frontend.canHandleStrings", "gpii.templates.templateFormControl", "fluid.viewComponent"],
+    fluid.defaults("gpii.express.user.frontend.forgot", {
+        gradeNames: ["gpii.express.user.frontend.canHandleStrings", "gpii.templates.templateFormControl", "fluid.viewComponent"],
         container:  ".forgot-viewport",
         ajaxOptions: {
             type:        "POST",
@@ -29,7 +29,7 @@
         }
     });
 
-    fluid.defaults("gpii.express.couchuser.frontend.forgot.hasUserControls", {
-        gradeNames: ["gpii.ul.hasUserControls", "gpii.express.couchuser.frontend.forgot"]
+    fluid.defaults("gpii.express.user.frontend.forgot.hasUserControls", {
+        gradeNames: ["gpii.ul.hasUserControls", "gpii.express.user.frontend.forgot"]
     });
 })(jQuery);

@@ -4,9 +4,9 @@
 (function () {
     "use strict";
     var gpii = fluid.registerNamespace("gpii");
-    fluid.registerNamespace("gpii.express.couchuser.frontend.passwordCheckingForm");
+    fluid.registerNamespace("gpii.express.user.frontend.passwordCheckingForm");
 
-    gpii.express.couchuser.frontend.passwordCheckingForm.checkPasswords = function (that) {
+    gpii.express.user.frontend.passwordCheckingForm.checkPasswords = function (that) {
         that.passwordsMatch = (that.model.password === that.model.confirm);
 
         if (that.passwordsMatch) {
@@ -18,7 +18,7 @@
     };
 
     // Override the default submission to add additional checks.  Only continue if the checks pass.
-    gpii.express.couchuser.frontend.passwordCheckingForm.checkAndSubmit = function (that, event) {
+    gpii.express.user.frontend.passwordCheckingForm.checkAndSubmit = function (that, event) {
         if (that.passwordsMatch) {
             that.continueSubmission(event);
         }
@@ -27,7 +27,7 @@
         }
     };
 
-    fluid.defaults("gpii.express.couchuser.frontend.passwordCheckingForm", {
+    fluid.defaults("gpii.express.user.frontend.passwordCheckingForm", {
         gradeNames: ["gpii.templates.templateFormControl"],
         model: {
             password: null,
@@ -43,11 +43,11 @@
         },
         modelListeners: {
             password: {
-                funcName: "gpii.express.couchuser.frontend.passwordCheckingForm.checkPasswords",
+                funcName: "gpii.express.user.frontend.passwordCheckingForm.checkPasswords",
                 args:     ["{that}"]
             },
             confirm: {
-                funcName: "gpii.express.couchuser.frontend.passwordCheckingForm.checkPasswords",
+                funcName: "gpii.express.user.frontend.passwordCheckingForm.checkPasswords",
                 args:     ["{that}"]
             }
         },
@@ -61,7 +61,7 @@
         },
         invokers: {
             submitForm: {
-                funcName: "gpii.express.couchuser.frontend.passwordCheckingForm.checkAndSubmit",
+                funcName: "gpii.express.user.frontend.passwordCheckingForm.checkAndSubmit",
                 args:     ["{that}", "{arguments}.0"]
             },
             continueSubmission: {

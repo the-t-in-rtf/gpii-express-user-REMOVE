@@ -3,8 +3,8 @@
 (function () {
     "use strict";
 
-    fluid.defaults("gpii.express.couchuser.frontend.signup", {
-        gradeNames: ["gpii.express.couchuser.frontend.canHandleStrings", "gpii.express.couchuser.frontend.passwordCheckingForm"],
+    fluid.defaults("gpii.express.user.frontend.signup", {
+        gradeNames: ["gpii.express.user.frontend.canHandleStrings", "gpii.express.user.frontend.passwordCheckingForm"],
         container:  ".signup-viewport",
         ajaxOptions: {
             type:   "POST",
@@ -47,7 +47,7 @@
         }
     });
 
-    fluid.defaults("gpii.express.couchuser.frontend.signup.hasUserControls", {
-        gradeNames: ["gpii.express.couchuser.frontend.signup", "gpii.ul.hasUserControls"]
+    fluid.defaults("gpii.express.user.frontend.signup.hasUserControls", {
+        gradeNames: ["gpii.express.user.frontend.signup", "gpii.ul.hasUserControls"]
     });
 })(jQuery);

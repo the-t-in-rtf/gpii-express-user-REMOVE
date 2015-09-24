@@ -4,15 +4,15 @@
 (function () {
     "use strict";
     var gpii = fluid.registerNamespace("gpii");
-    fluid.registerNamespace("gpii.express.couchuser.frontend.reset");
+    fluid.registerNamespace("gpii.express.user.frontend.reset");
 
-    gpii.express.couchuser.frontend.reset.extractQueryParams = function () {
+    gpii.express.user.frontend.reset.extractQueryParams = function () {
         var rawQuery = fluid.url.parseUri(window.location.href);
         return rawQuery.queryKey;
     };
 
-    fluid.defaults("gpii.express.couchuser.frontend.reset", {
-        gradeNames: ["gpii.express.couchuser.frontend.canHandleStrings", "gpii.express.couchuser.frontend.passwordCheckingForm"],
+    fluid.defaults("gpii.express.user.frontend.reset", {
+        gradeNames: ["gpii.express.user.frontend.canHandleStrings", "gpii.express.user.frontend.passwordCheckingForm"],
         container:  ".reset-viewport",
         ajaxOptions: {
             type:    "POST",
@@ -35,7 +35,7 @@
             req: {
                 query: {
                     expander: {
-                        funcName: "gpii.express.couchuser.frontend.reset.extractQueryParams"
+                        funcName: "gpii.express.user.frontend.reset.extractQueryParams"
                     }
                 }
             }

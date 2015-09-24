@@ -3,26 +3,26 @@
 (function () {
     "use strict";
     var gpii = fluid.registerNamespace("gpii");
-    fluid.registerNamespace("gpii.express.couchuser.frontend.verify");
+    fluid.registerNamespace("gpii.express.user.frontend.verify");
 
-    gpii.express.couchuser.frontend.verify.extractQueryParams = function () {
+    gpii.express.user.frontend.verify.extractQueryParams = function () {
         var rawQuery = fluid.url.parseUri(window.location.href);
         return rawQuery.queryKey;
     };
 
-    gpii.express.couchuser.frontend.verify.assembleUrl = function (baseUrl, code) {
+    gpii.express.user.frontend.verify.assembleUrl = function (baseUrl, code) {
         return baseUrl + code;
     };
 
-    fluid.defaults("gpii.express.couchuser.frontend.verify", {
-        gradeNames: ["gpii.express.couchuser.frontend.canHandleStrings", "gpii.templates.templateFormControl"],
+    fluid.defaults("gpii.express.user.frontend.verify", {
+        gradeNames: ["gpii.express.user.frontend.canHandleStrings", "gpii.templates.templateFormControl"],
         container:  ".verify-viewport",
         model: {
             code:     "{that}.model.req.query.code",
             req: {
                 query: {
                     expander: {
-                        funcName: "gpii.express.couchuser.frontend.verify.extractQueryParams"
+                        funcName: "gpii.express.user.frontend.verify.extractQueryParams"
                     }
                 }
             }
@@ -35,7 +35,7 @@
         ajaxOptions: {
             url:    {
                 expander: {
-                    funcName: "gpii.express.couchuser.frontend.verify.assembleUrl",
+                    funcName: "gpii.express.user.frontend.verify.assembleUrl",
                     args:     ["/api/user/verify/", "{that}.model.code"]
                 }
             },
@@ -62,7 +62,7 @@
         }
     });
 
-    fluid.defaults("gpii.express.couchuser.frontend.verify.hasUserControls", {
-        gradeNames: ["gpii.express.couchuser.frontend.verify", "gpii.ul.hasUserControls"]
+    fluid.defaults("gpii.express.user.frontend.verify.hasUserControls", {
+        gradeNames: ["gpii.express.user.frontend.verify", "gpii.ul.hasUserControls"]
     });
 })(jQuery);

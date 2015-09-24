@@ -17,11 +17,11 @@
                 <ul>
                     {{#if user}}
                         <li><a href="#" class="user-menu-logout"  tabindex="0">Log Out</a></li>
-                        <li><a href="/profile" class="user-menu-profile" tabindex="0">Profile</a></li>
+                        <li><a href="/api/user/profile" class="user-menu-profile" tabindex="0">Profile</a></li>
                     {{else}}
                         <li>
                             <p>You must log in before you can make changes.</p>
-                            <p><a href="/login{{#if path}}?source={{path}}{{/if}}" tabindex="0">Log in</a> or <a href="/signup{{#if path}}?source={{path}}{{/if}}" tabindex="0">Create an account</a>.</p>
+                            <p><a href="/api/user/login{{#if path}}?source={{path}}{{/if}}" tabindex="0">Log in</a> or <a href="/api/user/signup{{#if path}}?source={{path}}{{/if}}" tabindex="0">Create an account</a>.</p>
                         </li>
                     {{/if}}
                 </ul>
