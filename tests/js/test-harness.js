@@ -14,9 +14,9 @@ require("gpii-handlebars");
 
 require("./test-harness-pouch");
 
-var bowerDir        = path.resolve(__dirname, "../../../bower_components");
-var srcDir          = path.resolve(__dirname, "../../../src");
-var modulesDir      = path.resolve(__dirname, "../../../node_modules");
+var bowerDir        = path.resolve(__dirname, "../../bower_components");
+var srcDir          = path.resolve(__dirname, "../../src/js");
+var modulesDir      = path.resolve(__dirname, "../../node_modules");
 
 // Sample static router and handler.
 fluid.defaults("gpii.express.user.tests.helloHandler", {
