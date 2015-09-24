@@ -7,6 +7,8 @@ var request = require("request");
 
 fluid.registerNamespace("gpii.express.user.api.verify.handler");
 
+//require("./verify-resend");
+
 // Pass through an incoming request to the back end and display the response sanely
 gpii.express.user.api.verify.handler.passRequestToDataSource = function (that) {
     if (!that.request.params || !that.request.params.code) {
@@ -97,10 +99,11 @@ gpii.express.user.api.verify.handler.html.sendFinalResponse = function (that, st
 };
 
 fluid.defaults("gpii.express.user.api.verify.handler.html", {
-    gradeNames: ["gpii.express.user.api.verify.handler"],
+    gradeNames:  ["gpii.express.user.api.verify.handler"],
+    templateKey: "{gpii.express.user.api.verify}.options.templateKey",
     invokers: {
         sendFinalResponse: {
-            funcName: "gpii.express.user.api.verify.handler.json.sendFinalResponse",
+            funcName: "gpii.express.user.api.verify.handler.html.sendFinalResponse",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"] // statusCode, response
         }
     }
@@ -119,10 +122,11 @@ fluid.defaults("gpii.express.user.api.verify.handler.json", {
 });
 
 fluid.defaults("gpii.express.user.api.verify", {
-    gradeNames: ["gpii.express.contentAware.router"],
-    path:       ["/verify/:code"],
-    method:     "get",
-    codeKey:    "verification_code",  // Must match the value in gpii.express.user.api.verify
+    gradeNames:  ["gpii.express.contentAware.router"],
+    path:        ["/verify/:code"],
+    templateKey: "pages/verify",
+    method:      "get",
+    codeKey:     "verification_code",  // Must match the value in gpii.express.user.api.verify
     urls: {
         read: {
             expander: {
@@ -148,13 +152,22 @@ fluid.defaults("gpii.express.user.api.verify", {
         }
     },
     handlers: {
-        json: {
-            contentType:   "application/json",
-            handlerGrades: ["gpii.express.user.api.verify.handler.json"]
-        },
         text: {
             contentType:   ["text/html", "text/plain"],
             handlerGrades: ["gpii.express.user.api.verify.handler.html"]
+        },
+        json: {
+            contentType:   "application/json",
+            handlerGrades: ["gpii.express.user.api.verify.handler.json"]
         }
-    }
+    },
+    //components: {
+    //    resend: {
+    //        type: "gpii.express.user.verify.resend",
+    //        options: {
+    //            urls:        "{that}.options.urls",
+    //            templateDir: "{that}.options.templateDir"
+    //        }
+    //    }
+    //}
 });
