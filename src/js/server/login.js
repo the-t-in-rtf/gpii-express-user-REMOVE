@@ -52,8 +52,12 @@ fluid.defaults("gpii.express.user.api.login.post.handler", {
     schemaKey:  "message-core",
     schemaUrl:  "/schemas/message-core",
     sessionKey: "_gpii_user",
-    // TODO:  Make it easier to pass down parts of this sanely from the harness and production instance runner.
-    url:    "http://localhost:9599/users/_design/lookup/_view/byUsernameOrEmail?key=\"%username\"",
+    url:    {
+        expander: {
+            funcName: "fluid.stringTemplate",
+            args:     [ "http://localhost:%port/%dbName/_design/lookup/_view/byUsernameOrEmail?key=\"%username\"", "{that}.options.couch"]
+        }
+    },
     method: "post",  // TODO:  Change to "use" when we set up content aware handling.
     rules: {
         user: {
@@ -138,6 +142,16 @@ fluid.defaults("gpii.express.user.api.login.get", {
 fluid.defaults("gpii.express.user.api.login", {
     gradeNames: ["gpii.express.router.passthrough"],
     path:       "/login",
+    distributeOptions: [
+        {
+            source: "{that}.options.couch",
+            target: "{that gpii.express.router}.options.couch"
+        },
+        {
+            source: "{that}.options.couch",
+            target: "{that gpii.express.handler}.options.couch"
+        }
+    ],
     components: {
         getRouter: {
             type: "gpii.express.user.api.login.get"
