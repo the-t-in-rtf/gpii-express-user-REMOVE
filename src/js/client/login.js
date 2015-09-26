@@ -9,8 +9,8 @@
         // If the user controls are used to log out, we have to manually clear the success message.
     // If we delegate this to the controls component, it might clobber success messages for things other than the login.
     gpii.express.user.frontend.login.checkAndClearSuccess = function (that) {
-        if (!that.model.user) {
-            that.applier.change("successMessage", null);
+        if (!that.model.user || !that.model.user.username) {
+            that.applier.change("message", null);
             that.renderInitialMarkup();
         }
     };
@@ -28,7 +28,6 @@
         components: {
             success: {
                 options: {
-                    template: "login-success",
                     model: {
                         message: "{login}.model.message"
                     },

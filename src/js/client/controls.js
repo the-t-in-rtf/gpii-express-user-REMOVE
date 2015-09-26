@@ -53,8 +53,8 @@
         gradeNames: ["gpii.templates.templateFormControl"],
         container:  ".controls-viewport",
         ajaxOptions: {
-            type:     "POST",
-            url:      "/api/user/signout"
+            type:     "GET",
+            url:      "/api/user/logout"
         },
         templates: {
             initial: "controls-viewport",
