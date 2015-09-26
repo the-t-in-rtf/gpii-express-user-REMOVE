@@ -5,7 +5,7 @@
             <div class="button secondary expand small">
                 <span class="user-icon-user"></span>
                 {{#if user}}
-                    {{#if user.displayName}}{{user.displayName}}{{else}}{{user.name}}{{/if}}
+                    {{user.username}}
                 {{else}}
                     Not Logged In
                 {{/if}}

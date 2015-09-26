@@ -10,8 +10,8 @@
         return rawQuery.queryKey;
     };
 
-    gpii.express.user.frontend.verify.assembleUrl = function (baseUrl, code) {
-        return baseUrl + code;
+    gpii.express.user.frontend.verify.assembleUrl = function (userDbUrl, code) {
+        return userDbUrl + code;
     };
 
     fluid.defaults("gpii.express.user.frontend.verify", {

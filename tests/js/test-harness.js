@@ -177,7 +177,14 @@ fluid.defaults("gpii.express.user.tests.harness", {
                             path:        "/api/user",
                             templateDir: templateDir,
                             couch:  {
-                                port: "{harness}.options.pouchPort"
+                                port: "{harness}.options.pouchPort",
+                                userDbName: "users",
+                                userDbUrl: {
+                                    expander: {
+                                        funcName: "fluid.stringTemplate",
+                                        args:     ["http://localhost:%port/%userDbName", "{that}.options.couch"]
+                                    }
+                                }
                             },
                             app: "{gpii.express}.options.config.app"
                         }

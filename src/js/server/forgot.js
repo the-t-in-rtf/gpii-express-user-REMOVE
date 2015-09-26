@@ -166,7 +166,7 @@ fluid.defaults("gpii.express.user.api.forgot", {
             expander: {
                 funcName: "fluid.stringTemplate",
                 args: [
-                    "http://localhost:%port/%userDbName/_design/lookup/_view/byUsernameOrEmail?key=\"%email\"",
+                    "%userDbUrl/_design/lookup/_view/byUsernameOrEmail?key=\"%email\"",
                     "{that}.options.couch"
                 ]
             }
@@ -175,7 +175,7 @@ fluid.defaults("gpii.express.user.api.forgot", {
             expander: {
                 funcName: "fluid.stringTemplate",
                 args: [
-                    "http://localhost:%port/%userDbName/%id",
+                    "%userDbUrl/%id",
                     "{that}.options.couch"
                 ]
             }

@@ -28,8 +28,13 @@ fluid.defaults("gpii.express.user.api", {
     path:       "/user",
     method:     "use",
     couch: {
-        port:       "5984",
-        userDbName: "users"
+        userDbName: "_users",
+        userDbUrl: {
+            expander: {
+                funcName: "fluid.stringTemplate",
+                args:     ["http://admin:admin@localhost:%port/%userDbName", "{that}.options.couch"]
+            }
+        }
     },
     distributeOptions: [
         {

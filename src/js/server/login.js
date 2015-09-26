@@ -55,7 +55,7 @@ fluid.defaults("gpii.express.user.api.login.post.handler", {
     url:    {
         expander: {
             funcName: "fluid.stringTemplate",
-            args:     [ "http://localhost:%port/%userDbName/_design/lookup/_view/byUsernameOrEmail?key=\"%username\"", "{that}.options.couch"]
+            args:     [ "%userDbUrl/_design/lookup/_view/byUsernameOrEmail?key=\"%username\"", "{that}.options.couch"]
         }
     },
     method: "post",  // TODO:  Change to "use" when we set up content aware handling.
