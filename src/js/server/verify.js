@@ -131,23 +131,13 @@ fluid.defaults("gpii.express.user.api.verify", {
         read: {
             expander: {
                 funcName: "fluid.stringTemplate",
-                args:     [
-                    "%baseUrl/_design/lookup/_view/byVerificationCode?key=\"%code\"",
-                    {
-                        baseUrl: "{that}.options.couch.url"
-                    }
-                ]
+                args:     [ "http://localhost:%port/%userDbName/_design/lookup/_view/byVerificationCode?key=\"%code\"", "{that}.options.couch"]
             }
         },
         write: {
             expander: {
                 funcName: "fluid.stringTemplate",
-                args: [
-                    "%baseUrl/%id",
-                    {
-                        baseUrl: "{that}.options.couch.url"
-                    }
-                ]
+                args:     [ "http://localhost:%port/%userDbName/%id", "{that}.options.couch"]
             }
         }
     },

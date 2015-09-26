@@ -28,14 +28,8 @@ fluid.defaults("gpii.express.user.api", {
     path:       "/user",
     method:     "use",
     couch: {
-        port:     "5984",
-        dbName:   "users",
-        url:      {
-            expander: {
-                funcName: "fluid.stringTemplate",
-                args:     ["http://localhost:%port/%dbName", "{that}.options.couch"] // If you need to enter a username and password, do it here in the template.
-            }
-        }
+        port:       "5984",
+        userDbName: "users"
     },
     distributeOptions: [
         {

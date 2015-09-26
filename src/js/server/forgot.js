@@ -166,10 +166,8 @@ fluid.defaults("gpii.express.user.api.forgot", {
             expander: {
                 funcName: "fluid.stringTemplate",
                 args: [
-                    "%baseUrl/_design/lookup/_view/byUsernameOrEmail?key=\"%email\"",
-                    {
-                        baseUrl:  "{that}.options.couch.url"
-                    }
+                    "http://localhost:%port/%userDbName/_design/lookup/_view/byUsernameOrEmail?key=\"%email\"",
+                    "{that}.options.couch"
                 ]
             }
         },
@@ -177,11 +175,8 @@ fluid.defaults("gpii.express.user.api.forgot", {
             expander: {
                 funcName: "fluid.stringTemplate",
                 args: [
-                    "%baseUrl/%id",
-                    {
-                        baseUrl: "{that}.options.couch.url",
-                        id:      "%id"
-                    }
+                    "http://localhost:%port/%userDbName/%id",
+                    "{that}.options.couch"
                 ]
             }
         }
