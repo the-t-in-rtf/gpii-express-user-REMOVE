@@ -10,7 +10,7 @@
     // If we delegate this to the controls component, it might clobber success messages for things other than the login.
     gpii.express.user.frontend.login.checkAndClearSuccess = function (that) {
         if (!that.model.user || !that.model.user.username) {
-            that.applier.change("message", null);
+            that.applier.change("successMessage", null);
             that.renderInitialMarkup();
         }
     };
@@ -29,13 +29,20 @@
             success: {
                 options: {
                     model: {
-                        message: "{login}.model.message"
+                        message: "{login}.model.successMessage"
                     },
                     modelListeners: {
                         // TODO:  Review with Antranig to confirm why the rules in `templateMessage` aren't enough to handle this.
                         message: {
                             func: "{that}.renderInitialMarkup"
                         }
+                    }
+                }
+            },
+            error: {
+                options: {
+                    model: {
+                        message: "{login}.model.errorMessage"
                     }
                 }
             }
@@ -62,11 +69,22 @@
                 password: "password"
             },
             successResponseToModel: {
+                "": "notfound",
                 user: "responseJSON.user",
                 password: {
                     literalValue: ""
                 },
-                successMessage: "message"
+                successMessage: "responseJSON.message",
+                errorMessage: {
+                    literalValue: false
+                }
+            },
+            errorResponseToModel: {
+                "": "notfound",
+                errorMessage: "responseJSON.message",
+                successMessage: {
+                    literalValue: false
+                }
             }
         },
         bindings: {

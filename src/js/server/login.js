@@ -31,7 +31,6 @@ require("./lib/passthroughRouter");
 //
 //var schemaFiles = gpii.express.user.api.login.getSchemaFiles(path.resolve(__dirname, "../../schemas"));
 
-// TODO:  Make this content aware and serve up the login form by default.
 gpii.express.user.api.login.post.handler.verifyPassword = function (that, response) {
     if (that.request.body && that.request.body.username && that.request.body.password && response.salt && response.derived_key) {
         var encodedPassword = gpii.express.user.password.encode(that.request.body.password, response.salt, response.iterations, response.keyLength, response.digest);
@@ -58,7 +57,7 @@ fluid.defaults("gpii.express.user.api.login.post.handler", {
             args:     [ "%userDbUrl/_design/lookup/_view/byUsernameOrEmail?key=\"%username\"", "{that}.options.couch"]
         }
     },
-    method: "post",  // TODO:  Change to "use" when we set up content aware handling.
+    method: "post",
     rules: {
         user: {
             "username": "username",
