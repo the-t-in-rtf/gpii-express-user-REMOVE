@@ -70,7 +70,10 @@
             },
             successResponseToModel: {
                 "": "notfound",
-                user: "responseJSON.user",
+                user: {
+                    username: "responseJSON.user.name",
+                    email:    "responseJSON.user.email"
+                },
                 password: {
                     literalValue: ""
                 },

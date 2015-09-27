@@ -11,6 +11,7 @@ require("gpii-json-schema");
 require("./lib/datasource");
 require("./lib/password");
 require("./lib/passthroughRouter");
+require("./lib/singleTemplateRouter");
 
 //var loginSchemaContents = require("../../schemas/user-login.json");
 //
@@ -58,12 +59,6 @@ fluid.defaults("gpii.express.user.api.login.post.handler", {
         }
     },
     method: "post",
-    rules: {
-        user: {
-            "username": "username",
-            "email":    "email"
-        }
-    },
     invokers: {
         handleRequest: {
             func: "{reader}.get",
@@ -119,28 +114,15 @@ fluid.defaults("gpii.express.user.api.login.post", {
     }
 });
 
-fluid.registerNamespace("gpii.express.user.api.login.get");
-gpii.express.user.api.forgot.get.renderForm = function (that, request, response) {
-    response.status(200).render(that.options.templateKey, that.options.defaultContext);
-};
-
-fluid.defaults("gpii.express.user.api.login.get", {
-    gradeNames:      ["gpii.express.router"],
-    path:            "/",
-    method:          "get",
-    defaultContext:  {},
-    templateKey:     "pages/login",
-    invokers: {
-        route: {
-            funcName: "gpii.express.user.api.forgot.get.renderForm",
-            args:     ["{that}", "{arguments}.0", "{arguments}.1"] // request, response
-        }
-    }
-});
-
 fluid.defaults("gpii.express.user.api.login", {
     gradeNames: ["gpii.express.router.passthrough"],
     path:       "/login",
+    rules: {
+        user: {
+            "username": "name", // Default configuration is designed for CouchDB and express-couchUser field naming conventions.
+            "email":    "email"
+        }
+    },
     distributeOptions: [
         {
             source: "{that}.options.couch",
@@ -149,11 +131,18 @@ fluid.defaults("gpii.express.user.api.login", {
         {
             source: "{that}.options.couch",
             target: "{that gpii.express.handler}.options.couch"
+        },
+        {
+            source: "{that}.options.rules",
+            target: "{that gpii.express.handler}.options.rules"
         }
     ],
     components: {
         getRouter: {
-            type: "gpii.express.user.api.login.get"
+            type: "gpii.express.user.api.singleTemplateRouter",
+            options: {
+                templateKey: "pages/login"
+            }
         },
         postRouter: {
             type: "gpii.express.user.api.login.post"

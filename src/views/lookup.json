@@ -2,7 +2,7 @@
     "_id": "_design/lookup",
     "views": {
         "byUsernameOrEmail": {
-            "map": "function (doc) {\n if (doc.type === 'user') { emit (doc.username, doc); \n emit (doc.email, doc); \n } \n}"
+            "map": "function (doc) {\n if (doc.type === 'user') { emit (doc.name, doc); \n emit (doc.email, doc); \n } \n}"
         },
         "byVerificationCode": {
           "map": "function (doc) {\n if (doc.verification_code) { emit(doc.verification_code, doc); \n } \n}"

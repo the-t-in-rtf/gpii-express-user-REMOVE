@@ -7,15 +7,16 @@ var request = require("request"); // TODO:  Replace this with a writable data so
 require("./lib/datasource");
 require("./lib/mailer");
 require("./lib/password");
+require("./lib/singleTemplateRouter");
 
-fluid.registerNamespace("gpii.express.user.api.signup.handler");
+fluid.registerNamespace("gpii.express.user.api.signup.post.handler");
 
 // Check to see if the user exists.
-gpii.express.user.api.signup.handler.lookupExistingUser = function (that) {
+gpii.express.user.api.signup.post.handler.lookupExistingUser = function (that) {
     that.reader.get(that.request.body).then(that.checkForExistingUser);
 };
 
-gpii.express.user.api.signup.handler.checkForExistingUser = function (that, response) {
+gpii.express.user.api.signup.post.handler.checkForExistingUser = function (that, response) {
     if (response && response.username) {
         that.sendResponse(403, { ok: false, message: "A user with this email or username already exists."});
         return;
@@ -63,24 +64,24 @@ gpii.express.user.api.signup.handler.checkForExistingUser = function (that, resp
     });
 };
 
-fluid.defaults("gpii.express.user.api.signup.handler", {
+fluid.defaults("gpii.express.user.api.signup.post.handler", {
     gradeNames: ["gpii.express.handler"],
     templateDefaultContext: {
         app: "{gpii.express}.options.config.app"
     },
-    urls: "{gpii.express.user.api.signup}.options.urls",
-    saltLength: "{gpii.express.user.api.signup}.options.saltLength",
-    verifyCodeLength: "{gpii.express.user.api.signup}.options.verifyCodeLength",
-    codeKey: "{gpii.express.user.api.signup}.options.codeKey",
-    mailDefaults: "{gpii.express.user.api.signup}.options.mailDefaults",
-    userDefaults: "{gpii.express.user.api.signup}.options.userDefaults",
+    urls: "{gpii.express.user.api.signup.post}.options.urls",
+    saltLength: "{gpii.express.user.api.signup.post}.options.saltLength",
+    verifyCodeLength: "{gpii.express.user.api.signup.post}.options.verifyCodeLength",
+    codeKey: "{gpii.express.user.api.signup.post}.options.codeKey",
+    mailDefaults: "{gpii.express.user.api.signup.post}.options.mailDefaults",
+    userDefaults: "{gpii.express.user.api.signup.post}.options.userDefaults",
     invokers: {
         handleRequest: {
-            funcName: "gpii.express.user.api.signup.handler.lookupExistingUser",
+            funcName: "gpii.express.user.api.signup.post.handler.lookupExistingUser",
             args:     ["{that}"]
         },
         "checkForExistingUser": {
-            funcName: "gpii.express.user.api.signup.handler.checkForExistingUser",
+            funcName: "gpii.express.user.api.signup.post.handler.checkForExistingUser",
             args:     ["{that}", "{arguments}.0"],
             priority: "last"
         }
@@ -94,16 +95,16 @@ fluid.defaults("gpii.express.user.api.signup.handler", {
                         "": "rows.0.value"
                     }
                 },
-                url:     "{gpii.express.user.api.signup}.options.urls.read",
-                termMap: "{gpii.express.user.api.signup}.options.termMaps.read"
+                url:     "{gpii.express.user.api.signup.post}.options.urls.read",
+                termMap: "{gpii.express.user.api.signup.post}.options.termMaps.read"
             }
         },
         mailer: {
             type: "gpii.mailer.smtp.handlebars",
             options: {
-                templateDir:     "{gpii.express.user.api.signup}.options.templateDir",
-                htmlTemplateKey: "{gpii.express.user.api.signup}.options.htmlTemplateKey",
-                textTemplateKey: "{gpii.express.user.api.signup}.options.textTemplateKey",
+                templateDir:     "{gpii.express.user.api.signup.post}.options.templateDir",
+                htmlTemplateKey: "{gpii.express.user.api.signup.post}.options.htmlTemplateKey",
+                textTemplateKey: "{gpii.express.user.api.signup.post}.options.textTemplateKey",
                 listeners: {
                     "onSuccess.sendResponse": {
                         func: "{handler}.sendResponse",
@@ -122,10 +123,10 @@ fluid.defaults("gpii.express.user.api.signup.handler", {
 
 // TODO:  Wire up JSON schema validation middleware to automatically reject bad input.
 
-fluid.defaults("gpii.express.user.api.signup", {
+fluid.defaults("gpii.express.user.api.signup.post", {
     gradeNames:       ["gpii.express.requestAware.router"],
-    handlerGrades:    ["gpii.express.user.api.signup.handler"],
-    path:             "/signup",
+    handlerGrades:    ["gpii.express.user.api.signup.post.handler"],
+    path:             "/",
     method:           "post",
     saltLength:       32,
     verifyCodeLength: 16,
@@ -138,13 +139,23 @@ fluid.defaults("gpii.express.user.api.signup", {
         read:  {
             expander: {
                 funcName: "fluid.stringTemplate",
-                args: [ "%url%path?keys=[\"%username\",\"%email\"]", { url: "{that}.options.couch.url", path: "{that}.options.couchPath"}]
+                args: [ "%userDbUrl%path?keys=[\"%username\",\"%email\"]", { userDbUrl: "{that}.options.couch.userDbUrl", path: "{that}.options.couchPath"}]
             }
         },
-        write: "{that}.options.couch.url"
+        write: "{that}.options.couch.userDbUrl"
+    },
+    rules: {
+        write: {
+            "": "",
+            "name": "username" // Default rules are designed to cater to CouchDB  and express-couchUser conventions, but can be overriden.
+        }
+    },
+    distributeOptions: {
+        source: "{that}.options.rules",
+        target: "{that gpii.express.handler}.options.rules"
     },
     termMaps: {
-        read: { username: "%username", email: "%email"}
+        read: { username: "%name", email: "%email"}
     },
     mailDefaults: {
         from:    "test@localhost",
@@ -156,5 +167,42 @@ fluid.defaults("gpii.express.user.api.signup", {
         password_scheme: "pbkdf2",
         iterations:      10,
         verified:        false
+    }
+});
+
+
+fluid.defaults("gpii.express.user.api.signup", {
+    gradeNames: ["gpii.express.router.passthrough"],
+    path:       "/signup",
+    rules: {
+        user: {
+            "username": "name", // Default configuration is designed for CouchDB and express-couchUser field naming conventions.
+            "email":    "email"
+        }
+    },
+    distributeOptions: [
+        {
+            source: "{that}.options.couch",
+            target: "{that gpii.express.router}.options.couch"
+        },
+        {
+            source: "{that}.options.couch",
+            target: "{that gpii.express.handler}.options.couch"
+        },
+        {
+            source: "{that}.options.rules",
+            target: "{that gpii.express.handler}.options.rules"
+        }
+    ],
+    components: {
+        getRouter: {
+            type: "gpii.express.user.api.singleTemplateRouter",
+            options: {
+                templateKey: "pages/signup"
+            }
+        },
+        postRouter: {
+            type: "gpii.express.user.api.signup.post"
+        }
     }
 });

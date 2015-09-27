@@ -21,25 +21,7 @@ var request = require("request");
 
 require("./lib/password");
 require("./lib/passthroughRouter");
-
-fluid.registerNamespace("gpii.express.user.api.forgot.get");
-gpii.express.user.api.forgot.get.renderForm = function (that, request, response) {
-    response.status(200).render(that.options.templateKey, that.options.defaultContext);
-};
-
-fluid.defaults("gpii.express.user.api.forgot.get", {
-    gradeNames:      ["gpii.express.router"],
-    path:            "/",
-    method:          "get",
-    defaultContext:  {},
-    templateKey:     "{gpii.express.user.api.forgot}.options.templates.form",
-    invokers: {
-        route: {
-            funcName: "gpii.express.user.api.forgot.get.renderForm",
-            args:     ["{that}", "{arguments}.0", "{arguments}.1"] // request, response
-        }
-    }
-});
+require("./lib/singleTemplateRouter");
 
 fluid.registerNamespace("gpii.express.user.api.forgot.post.handler");
 gpii.express.user.api.forgot.post.handler.checkUser = function (that, user) {
@@ -224,7 +206,11 @@ fluid.defaults("gpii.express.user.api.forgot", {
     ],
     components: {
         getRouter: {
-            type: "gpii.express.user.api.forgot.get"
+            type: "gpii.express.user.api.singleTemplateRouter",
+            options: {
+                templateKey: "{gpii.express.user.api.forgot}.options.templates.form",
+                defaultContext: "{gpii.express.user.api.forgot}.options.defaultContext"
+            }
         },
         postRouter: {
             type: "gpii.express.user.api.forgot.post"
