@@ -72,7 +72,8 @@ fluid.defaults("gpii.express.user.api.login.post.handler", {
                 url: "{gpii.express.user.api.login.post.handler}.options.url",
                 rules: {
                     read: {
-                        "": "rows.0.value"
+                        "":         "rows.0.value",
+                        "username": "rows.0.value.name"
                     }
                 },
                 termMap: { username: "%username"},
