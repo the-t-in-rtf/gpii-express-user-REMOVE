@@ -121,7 +121,8 @@ fluid.defaults("gpii.express.user.api.login", {
     rules: {
         user: {
             "username": "name", // Default configuration is designed for CouchDB and express-couchUser field naming conventions.
-            "email":    "email"
+            "email":    "email",
+            "roles":    "roles"
         }
     },
     distributeOptions: [
