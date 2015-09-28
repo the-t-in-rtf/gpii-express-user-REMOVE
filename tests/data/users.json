@@ -8,6 +8,7 @@
             "salt":        "secret",
             "iterations":  10,
             "email":       "sample@sample.com",
+            "roles":       ["role1", "role3"],
             "verified":    true
         },
         {
@@ -17,6 +18,7 @@
             "salt":        "secret",
             "iterations":  10,
             "email":       "unverified@sample.com",
+            "roles":       ["role1", "role2"],
             "verified":    false
         },
         {
@@ -27,6 +29,7 @@
             "salt":        "secret",
             "iterations":  10,
             "email":       "existing@sample.com",
+            "roles":       ["role3", "role2"],
             "verified":    true
         },
         {
