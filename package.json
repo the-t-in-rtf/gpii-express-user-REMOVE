@@ -20,7 +20,7 @@
   "dependencies": {
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#102d082ec36ef46875670079abeb022d07ae3bcd",
     "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#227d05e4f9647d3a6b0e9c044cd2c742bce1c157",
-    "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#bdcd5ca26a4004b5e3f192d4d7c5b15908470639",
+    "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#ecf58531e62ea5950a6fc912c32b2978d882b98c",
     "grunt": "0.4.4",
     "grunt-contrib-jshint": "0.9.0",
     "grunt-gpii": "git://github.com/GPII/grunt-gpii.git#58ae055833f437a9e91baedb9f39a22c5fdd727f",

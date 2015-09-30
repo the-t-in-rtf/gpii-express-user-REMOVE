@@ -1,6 +1,6 @@
 {
     "type":        "object",
-    "id":          "user-message",
+    "id":          "user-message.json",
     "title":       "gpii-express-user core user schema",
     "description": "This schema defines the message format used in providing feedback on a request to /api/user.",
     "allOf": [

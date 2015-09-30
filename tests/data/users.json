@@ -7,7 +7,7 @@
             "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
             "salt":        "secret",
             "iterations":  10,
-            "email":       "sample@sample.com",
+            "email":       "sample@localhost",
             "roles":       ["role1", "role3"],
             "verified":    true
         },
@@ -17,7 +17,7 @@
             "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
             "salt":        "secret",
             "iterations":  10,
-            "email":       "unverified@sample.com",
+            "email":       "unverified@localhost",
             "roles":       ["role1", "role2"],
             "verified":    false
         },
@@ -28,7 +28,7 @@
             "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
             "salt":        "secret",
             "iterations":  10,
-            "email":       "existing@sample.com",
+            "email":       "existing@localhost",
             "roles":       ["role3", "role2"],
             "verified":    true
         },

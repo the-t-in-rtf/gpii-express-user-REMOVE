@@ -3,7 +3,7 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-require("../../src/js/server/lib/standaloneRenderer");
+require("../../../src/js/server/lib/standaloneRenderer");
 
 var jqUnit = require("jqUnit");
 var path   = require("path");

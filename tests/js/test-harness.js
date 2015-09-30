@@ -1,7 +1,6 @@
 // The common test harness we will use for all tests as well as manual verification.
 "use strict";
 var fluid = fluid || require("infusion");
-var gpii  = fluid.registerNamespace("gpii");
 
 var path        = require("path");
 var templateDir = path.resolve(__dirname, "../../src/templates");
@@ -11,6 +10,7 @@ require("../../src/js/server/session");
 
 require("gpii-express");
 require("gpii-handlebars");
+require("gpii-mail-test");
 
 require("./test-harness-pouch");
 
@@ -18,51 +18,18 @@ var bowerDir        = path.resolve(__dirname, "../../bower_components");
 var srcDir          = path.resolve(__dirname, "../../src");
 var modulesDir      = path.resolve(__dirname, "../../node_modules");
 
-// Sample static router and handler.
-fluid.defaults("gpii.express.user.tests.helloHandler", {
-    gradeNames: ["gpii.express.handler"],
-    invokers: {
-        handleRequest: {
-            func: "{that}.sendResponse",
-            args: [200, "Hello, ambivalent world."]
-        }
-    }
-});
-
-// Cookie setting test router and handler.
-fluid.registerNamespace("gpii.express.user.tests.cookieSetter.handler");
-gpii.express.user.tests.cookieSetter.handler.setCookie = function (that) {
-    that.response.cookie("_gpii_session", { foo: "bar" });
-    that.sendResponse(200, "The cookie has been set");
-};
-
-fluid.defaults("gpii.express.user.tests.cookieSetter.handler", {
-    gradeNames: ["gpii.express.handler"],
-    invokers: {
-        handleRequest: {
-            funcName: "gpii.express.user.tests.cookieSetter.handler.setCookie",
-            args: ["{that}"]
-        }
-    }
-});
-
-fluid.defaults("gpii.express.user.tests.cookieSetter", {
-    gradeNames:    ["gpii.express.requestAware.router"],
-    path:          "/setCookie",
-    handlerGrades: ["gpii.express.user.tests.cookieSetter.handler"]
-});
-
 fluid.defaults("gpii.express.user.tests.harness", {
     gradeNames: ["fluid.component"],
     pouchPort:  "9735",
-    apiPort: "5379",
+    apiPort:    "5379",
+    mailPort:   "5225",
     apiUrl: {
         expander: {
             funcName: "fluid.stringTemplate",
-            args:     ["http://localhost:%port/", { port: "{that}.options.apiPort"}]
+            args:     ["http://localhost:%port/api/user/", { port: "{that}.options.apiPort"}]
         }
     },
-    // As we may commonly be working with a debugger, we need a much longer timeout for all `requestAwareRouter`  and `contentAware` grades.
+    // As we may commonly be working with a debugger, we need a much longer timeout for all `requestAwareRouter` and `contentAware` grades.
     timeout: 99999999,
     distributeOptions: [
         {
@@ -75,13 +42,15 @@ fluid.defaults("gpii.express.user.tests.harness", {
         }
     ],
     events: {
-        onPouchStarted: null,
-        onApiStarted: null,
+        onPouchStarted:        null,
+        onApiStarted:          null,
         onPouchExpressStarted: null,
+        onMailReady:           null,
         onStarted: {
             events: {
                 onPouchStarted: "onPouchStarted",
-                onApiStarted:   "onApiStarted"
+                onApiStarted:   "onApiStarted",
+                onMailReady:    "onMailReady"
             }
         }
     },
@@ -103,51 +72,9 @@ fluid.defaults("gpii.express.user.tests.harness", {
                     onStarted: "{harness}.events.onApiStarted.fire"
                 },
                 components: {
-                    //// Required middleware
-                    //json: {
-                    //    type: "gpii.express.middleware.bodyparser.json"
-                    //},
-                    //urlencoded: {
-                    //    type: "gpii.express.middleware.bodyparser.urlencoded"
-                    //},
-                    //cookieparser: {
-                    //    type: "gpii.express.middleware.cookieparser"
-                    //},
-                    //session: {
-                    //    type: "gpii.express.middleware.session",
-                    //    options: {
-                    //        config: {
-                    //            express: {
-                    //                session: {
-                    //                    secret: "Printer, printer take a hint-ter."
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //},
-
-                    //// Session persister
-                    //persister: {
-                    //    type: "gpii.express.user.middleware.session"
-                    //},
-
                     handlebars: {
                         type: "gpii.express.hb"
                     },
-                    // TODO:  We can get rid of this once the API component is ready
-                    hello: {
-                        type: "gpii.express.requestAware.router",
-                        options: {
-                            path: "/",
-                            handlerGrades: ["gpii.express.user.tests.helloHandler"]
-                        }
-                    },
-
-                    //// TODO: We can get rid of this once we figure out cookie handling
-                    //cookieSetter: {
-                    //    type: "gpii.express.user.tests.cookieSetter"
-                    //},
-
 
                     // Front-end content used by some GET calls
                     modules: {
@@ -207,6 +134,15 @@ fluid.defaults("gpii.express.user.tests.harness", {
                 pouchPort: "{harness}.options.pouchPort",
                 listeners: {
                     onAllStarted: "{harness}.events.onPouchStarted.fire"
+                }
+            }
+        },
+        smtp: {
+            type: "gpii.test.mail.smtp",
+            options: {
+                port: "{harness}.options.smtpPort",
+                listeners: {
+                    "ready": "{harness}.events.onMailReady.fire"
                 }
             }
         }

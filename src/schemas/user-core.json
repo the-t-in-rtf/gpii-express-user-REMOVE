@@ -1,12 +1,15 @@
 {
     "type":        "object",
-    "id":          "user-core",
+    "id":          "user-core.json",
     "title":       "gpii-express-user core user schema",
     "description": "This schema defines the common format for user data transmitted and received by the gpii-express-user library.",
     "definitions": {
         "email": {
             "type": "string",
-            "format": "email"
+            "anyOf": [
+              { "format":  "email" },
+              { "pattern": "localhost"}
+            ]
         },
         "username": {
             "type": "string"
@@ -25,16 +28,16 @@
     },
     "properties": {
         "email": {
-            "$ref": "user-core#/definitions/email"
+            "$ref": "#/definitions/email"
         },
         "username": {
-            "$ref": "user-core#/definitions/username"
+            "$ref": "#/definitions/username"
         },
         "password": {
-            "$ref": "user-core#/definitions/password"
+            "$ref": "#/definitions/password"
         },
         "profile": {
-            "$ref": "user-core#/definitions/profile"
+            "$ref": "#/definitions/profile"
         }
     },
     "required": ["email", "username"]

@@ -21,6 +21,7 @@ gpii.express.user.password.encode = function (password, salt, iterations, keyLen
     keyLength  = keyLength  ? keyLength  : 20;
     digest     = digest     ? digest     :"sha1"; // Already used when the value is omitted, but specified for future-proofing.
 
+    // This will fail horribly if the password is not a number, array, or string, you are expected to catch errors.
     var hexEncodedValue = crypto.pbkdf2Sync(password, salt, iterations, keyLength, digest);
     return hexEncodedValue.toString("hex");
 };

@@ -13,10 +13,10 @@ fluid.setLogging(true);
 var jqUnit = require("jqUnit");
 var cookie = require("cookie");
 
-require("./kettle-includes");
-require("./test-harness");
+require("./../kettle-includes");
+require("./../test-harness");
 
-require("../../node_modules/gpii-express/tests/js/lib/test-helpers");
+require("../../../node_modules/gpii-express/tests/js/lib/test-helpers");
 
 fluid.registerNamespace("gpii.express.user.session.tests.request");
 

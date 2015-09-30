@@ -11,12 +11,12 @@ var gpii   = fluid.registerNamespace("gpii");
 var jqUnit = require("jqUnit");
 
 require("gpii-express");
-require("./test-harness-pouch");
-require("./kettle-includes");
+require("./../test-harness-pouch");
+require("./../kettle-includes");
 
-require("../../src/js/server/lib/datasource");
+require("../../../src/js/server/lib/datasource");
 
-require("../../node_modules/gpii-express/tests/js/lib/test-helpers");
+require("../../../node_modules/gpii-express/tests/js/lib/test-helpers");
 
 fluid.registerNamespace("gpii.express.user.datasource.tests");
 gpii.express.user.datasource.tests.checkResult = function (that, response, expected) {

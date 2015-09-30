@@ -4,6 +4,9 @@ var gpii   = fluid.registerNamespace("gpii");
 
 var request = require("request"); // TODO:  Replace this with a writable data source.
 
+var path      = require("path");
+var schemaDir = path.resolve(__dirname, "../../schemas");
+
 require("./lib/datasource");
 require("./lib/mailer");
 require("./lib/password");
@@ -121,13 +124,9 @@ fluid.defaults("gpii.express.user.api.signup.post.handler", {
     }
 });
 
-// TODO:  Wire up JSON schema validation middleware to automatically reject bad input.
-
 fluid.defaults("gpii.express.user.api.signup.post", {
-    gradeNames:       ["gpii.express.requestAware.router"],
-    handlerGrades:    ["gpii.express.user.api.signup.post.handler"],
+    gradeNames:       ["gpii.express.router.passthrough"],
     path:             "/",
-    method:           "post",
     saltLength:       32,
     verifyCodeLength: 16,
     codeKey:          "verification_code",  // Must match the value in gpii.express.user.api.verify
@@ -167,6 +166,23 @@ fluid.defaults("gpii.express.user.api.signup.post", {
         password_scheme: "pbkdf2",
         iterations:      10,
         verified:        false
+    },
+    components: {
+        schemaMiddleware: {
+            type: "gpii.schema.middleware",
+            options: {
+                schemaDir: schemaDir,
+                schemaKey: "user-signup"
+            }
+        },
+        requestAwareRouter: {
+            type: "gpii.express.requestAware.router",
+            options: {
+                method:           "post",
+                path:             "/",
+                handlerGrades:    ["gpii.express.user.api.signup.post.handler"]
+            }
+        }
     }
 });
 

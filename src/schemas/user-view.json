@@ -5,13 +5,13 @@
     "description": "This schema defines the format returned when viewing a user's information.",
     "properties": {
         "email": {
-            "$ref": "user-core#/definitions/email"
+            "$ref": "user-core.json#/definitions/email"
         },
         "username": {
-            "$ref": "user-core#/definitions/username"
+            "$ref": "user-core.json#/definitions/username"
         },
         "profile": {
-            "$ref": "user-core#/definitions/profile"
+            "$ref": "user-core.json#/definitions/profile"
         }
     },
     "additionalFields": false,

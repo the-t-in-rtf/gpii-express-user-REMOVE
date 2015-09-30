@@ -1,6 +1,6 @@
 {
     "type":        "object",
-    "id":          "message-core",
+    "id":          "message-core.json",
     "title":       "gpii-express-user core message schema",
     "description": "This schema defines the core message format used in providing feedback for a given request.",
     "definitions": {
@@ -17,10 +17,10 @@
     },
     "properties": {
         "ok": {
-            "$ref": "user-message#/definitions/ok"
+            "$ref": "user-message.json#/definitions/ok"
         },
         "errors": {
-            "$ref": "user-message#/definitions/errors"
+            "$ref": "user-message.json#/definitions/errors"
         },
         "message": {
             "$ref": "user-message#/definitions/message"

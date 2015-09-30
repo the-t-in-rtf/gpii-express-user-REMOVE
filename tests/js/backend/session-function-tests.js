@@ -8,7 +8,7 @@ var fluid  = fluid || require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
 var jqUnit = require("jqUnit");
 
-require("../../src/js/server/session");
+require("../../../src/js/server/session");
 
 jqUnit.module("Unit test session persisting middleware functions...");
 

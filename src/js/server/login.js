@@ -4,8 +4,8 @@ var gpii   = fluid.registerNamespace("gpii");
 
 fluid.registerNamespace("gpii.express.user.api.login.post.handler");
 
-//var path = require("path");
-//var fs   = require("fs");
+var path      = require("path");
+var schemaDir = path.resolve(__dirname, "../../schemas");
 
 require("gpii-json-schema");
 require("./lib/datasource");
@@ -13,24 +13,7 @@ require("./lib/password");
 require("./lib/passthroughRouter");
 require("./lib/singleTemplateRouter");
 
-//var loginSchemaContents = require("../../schemas/user-login.json");
-//
-//// TODO: Improve the schema middleware to make it easier to bring in schemas that depend on other schemas.
-//fluid.registerNamespace("gpii.express.user.api.login");
-//gpii.express.user.api.login.getSchemaFiles = function (dir) {
-//    var schemaFiles = {};
-//    fluid.each(fs.readdirSync(dir), function (filename) {
-//        var key = filename.replace(/\.json/, "");
-//        if (key !== filename) {
-//            var schemaFilePath = path.resolve(dir, filename);
-//            schemaFiles[key] = schemaFilePath;
-//        }
-//    });
-//
-//    return schemaFiles;
-//};
-//
-//var schemaFiles = gpii.express.user.api.login.getSchemaFiles(path.resolve(__dirname, "../../schemas"));
+fluid.registerNamespace("gpii.express.user.api.login");
 
 gpii.express.user.api.login.post.handler.verifyPassword = function (that, response) {
     if (that.request.body && that.request.body.username && that.request.body.password && response.salt && response.derived_key) {
@@ -95,23 +78,25 @@ fluid.defaults("gpii.express.user.api.login.post.handler", {
 });
 
 fluid.defaults("gpii.express.user.api.login.post", {
-    gradeNames: ["gpii.express.requestAware.router"],
+    gradeNames: ["gpii.express.router.passthrough"],
     path:       "/",
-    method:     "post",
-    handlerGrades: ["gpii.express.user.api.login.post.handler"],
-    // TODO:  set up and test Schema middleware blocking
+    method:     "use",
     components: {
-        //schemaMiddleware: {
-        //    type: "gpii.schema.middleware",
-        //    options: {
-        //        schemaFiles:   schemaFiles,
-        //        schemaContent: loginSchemaContents,
-        //        distributeOptions: {
-        //            source: "{that}.options.schemaFiles",
-        //            target: "{that > validator}.options.schemaFiles"
-        //        }
-        //    }
-        //},
+        schemaMiddleware: {
+            type: "gpii.schema.middleware",
+            options: {
+                schemaDir: schemaDir,
+                schemaKey: "user-login"
+            }
+        },
+        requestAwareRouter: {
+            type: "gpii.express.requestAware.router",
+            options: {
+                path:          "/",
+                method:        "post",
+                handlerGrades: ["gpii.express.user.api.login.post.handler"]
+            }
+        }
     }
 });
 
