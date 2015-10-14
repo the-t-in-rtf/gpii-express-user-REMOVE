@@ -9,7 +9,7 @@ var path       = require("path");
 var jqUnit     = require("jqUnit");
 var MailParser = require("mailparser").MailParser;
 
-var templateDir = path.resolve(__dirname, "../templates");
+var templateDir = path.resolve(__dirname, "../../templates");
 
 require("gpii-mail-test");
 require("./../kettle-includes");
@@ -92,6 +92,11 @@ fluid.defaults("gpii.mailer.tests.caseHolder", {
                             listener: "gpii.mailer.tests.checkResponse",
                             event: "{testEnvironment}.events.onMessageReceived",
                             args:  ["{arguments}.0", "{caseHolder}.options.expected.textMessage"]
+                        },
+                        // Required to allow the mailer to finish its business before it's destroyed.
+                        {
+                            listener: "fluid.identity",
+                            event: "{textMailer}.events.onSuccess"
                         }
                     ]
                 },
@@ -107,6 +112,11 @@ fluid.defaults("gpii.mailer.tests.caseHolder", {
                             listener: "gpii.mailer.tests.checkResponse",
                             event: "{testEnvironment}.events.onMessageReceived",
                             args:  ["{arguments}.0", "{caseHolder}.options.expected.templateMessage"]
+                        },
+                        // Required to allow the mailer to finish its business before it's destroyed.
+                        {
+                            listener: "fluid.identity",
+                            event: "{templateMailer}.events.onSuccess"
                         }
                     ]
                 }
@@ -115,7 +125,7 @@ fluid.defaults("gpii.mailer.tests.caseHolder", {
     ],
     components: {
         textMailer: {
-            type: "gpii.mailer.smtp.text",
+            type: "gpii.express.user.mailer.text",
             options: {
                 transportOptions: {
                     port: "{testEnvironment}.options.mailPort"
@@ -123,7 +133,7 @@ fluid.defaults("gpii.mailer.tests.caseHolder", {
             }
         },
         templateMailer: {
-            type: "gpii.mailer.smtp.handlebars",
+            type: "gpii.express.user.mailer.handlebars",
             options: {
                 transportOptions: {
                     port: "{testEnvironment}.options.mailPort"
@@ -154,10 +164,10 @@ fluid.defaults("gpii.mailer.tests.environment", {
                     mailServer: {
                         options: {
                             listeners: {
-                                "ready.notifyEnvironment": {
+                                "onReady.notifyEnvironment": {
                                     func: "{testEnvironment}.events.onStarted.fire"
                                 },
-                                "messageReceived.notifyEnvironment": {
+                                "onMessageReceived.notifyEnvironment": {
                                     func: "{testEnvironment}.events.onMessageReceived.fire",
                                     args: ["{arguments}.0", "{arguments}.1"]
                                 }

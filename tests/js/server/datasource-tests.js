@@ -68,9 +68,8 @@ fluid.defaults("gpii.express.users.datasource.tests.caseHolder", {
     gradeNames: ["gpii.express.tests.caseHolder"],
     expected: {
         sample: {
-            "username": "sample",
-            "password": "secret",
-            "email":    "sample@sample.com",
+            "name":     "sample",
+            "email":    "sample@localhost",
             "verified": true
         },
         createResponse: {
@@ -78,18 +77,16 @@ fluid.defaults("gpii.express.users.datasource.tests.caseHolder", {
         },
         created: {
             "_id":      "created",
-            "username": "created",
-            "password": "secret",
-            "email":    "created@sample.com"
+            "name":     "created",
+            "email":    "created@localhost"
         },
         updateResponse: {
             _id: "existing"
         },
         updated: {
             "_id":      "existing",
-            "username": "existing",
-            "password": "updated",
-            "email":    "existing@sample.com",
+            "name":     "existing",
+            "email":    "existing@localhost",
             "verified": true
         }
     },

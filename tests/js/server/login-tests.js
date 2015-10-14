@@ -201,7 +201,7 @@ fluid.defaults("gpii.express.user.api.login.test.caseHolder", {
                         {
                             listener: "gpii.express.user.api.login.test.caseHolder.verifyResponse",
                             event: "{bogusLoginRequest}.events.onComplete",
-                            args: ["{bogusLoginRequest}.nativeResponse", "{arguments}.0", 400, null, ["ok", "user"]]
+                            args: ["{bogusLoginRequest}.nativeResponse", "{arguments}.0", 401, null, ["ok", "user"]]
                         }
                     ]
                 },

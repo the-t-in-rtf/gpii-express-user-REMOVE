@@ -129,7 +129,7 @@ function runTests() {
         var email     = "email-" + timestamp + "@localhost";
 
         // Set up a handler to continue the process once we receive an email
-        harness.smtp.events.messageReceived.addListener(function (that) {
+        harness.smtp.events.onMessageReceived.addListener(function (that) {
             var MailParser = require("mailparser").MailParser,
                 mailparser = new MailParser();
 

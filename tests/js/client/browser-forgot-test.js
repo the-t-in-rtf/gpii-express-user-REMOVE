@@ -32,7 +32,7 @@ function runTests() {
         var timestamp = (new Date()).getTime();
 
         // Set up a handler to continue the process once we receive an email
-        harness.smtp.events.messageReceived.addListener("", function (that) {
+        harness.smtp.events.onMessageReceived.addListener("", function (that) {
             var content = fs.readFileSync(that.currentMessageFile);
 
             // Get the reset code and continue the reset process
@@ -174,7 +174,7 @@ function runTests() {
         var timestamp = (new Date()).getTime();
 
         // Set up a handler to continue the process once we receive an email
-        harness.smtp.events.messageReceived.addListener(function (that) {
+        harness.smtp.events.onMessageReceived.addListener(function (that) {
             // This is a MIME message, it will mangle the lines and special characters unless we decode it.
             var MailParser = require("mailparser").MailParser,
                 mailparser = new MailParser();

@@ -1,6 +1,6 @@
 /*
 
-  Tests for the related "signup" and "verify" functions.
+    The user self-signup is a two step process.  These tests exercise both steps independently and together.
 
  */
 "use strict";
@@ -15,21 +15,12 @@ require("../../../node_modules/kettle/lib/test/KettleTestUtils");
 require("../../../node_modules/gpii-express/tests/js/lib/test-helpers");
 require("../test-environment");
 
+require("../lib/generate-user");
+
 var jqUnit       = require("jqUnit");
 var fs           = require("fs");
 
 fluid.registerNamespace("gpii.express.user.api.signup.test.caseHolder");
-
-gpii.express.user.api.signup.test.caseHolder.generateUser = function () {
-    var timestamp = (new Date()).getTime();
-    return {
-        username: "user-" + timestamp,
-        password: "Password-" + timestamp,
-        confirm:  "Password-" + timestamp,
-        email:    "email-" + timestamp + "@localhost"
-    };
-};
-
 
 gpii.express.user.api.signup.test.caseHolder.verifyResponse = function (response, body, statusCode, truthy, falsy, hasCurrentUser) {
     if (!statusCode) { statusCode = 200; }
@@ -56,7 +47,7 @@ gpii.express.user.api.signup.test.caseHolder.verifyResponse = function (response
 
 // Listen for the email with the verification code and launch the verification request
 gpii.express.user.api.signup.test.caseHolder.fullSignupVerifyEmail = function (signupRequest, verificationRequest, testEnvironment) {
-    var content = fs.readFileSync(testEnvironment.smtp.mailServer.currentMessageFile);
+    var content = fs.readFileSync(testEnvironment.harness.smtp.mailServer.currentMessageFile, "utf8");
 
     var MailParser = require("mailparser").MailParser,
     mailparser = new MailParser({debug: false});
@@ -64,7 +55,7 @@ gpii.express.user.api.signup.test.caseHolder.fullSignupVerifyEmail = function (s
     // If this gets any deeper, refactor to use a separate function
     mailparser.on("end", function (mailObject) {
         var content = mailObject.text;
-        var verificationCodeRegexp = new RegExp("verify[?]code=([a-z0-9-]+)", "i");
+        var verificationCodeRegexp = new RegExp("https?://[^/]+/api/user/verify/([a-z0-9-]+)", "i");
         var matches = content.toString().match(verificationCodeRegexp);
 
         jqUnit.assertNotNull("There should be a verification code in the email sent to the user.", matches);
@@ -75,7 +66,7 @@ gpii.express.user.api.signup.test.caseHolder.fullSignupVerifyEmail = function (s
 
             // I can't fix this with the model, so I have to override it completely
             verificationRequest.options.path = path;
-            verificationRequest.send();
+            verificationRequest.send({}, { headers: { "Accept": "application/json" }});
         }
     });
 
@@ -141,7 +132,7 @@ fluid.defaults("gpii.express.user.api.signup.test.caseHolder", {
                 port: "{testEnvironment}.options.apiPort",
                 user: {
                     expander: {
-                        funcName: "gpii.express.user.api.signup.test.caseHolder.generateUser"
+                        funcName: "gpii.express.user.api.signup.test.generateUser"
                     }
                 },
                 method: "POST"
@@ -212,10 +203,11 @@ fluid.defaults("gpii.express.user.api.signup.test.caseHolder", {
                         {
                             listener: "gpii.express.user.api.signup.test.caseHolder.verifyResponse",
                             event:    "{bogusVerificationRequest}.events.onComplete",
-                            args:     ["{bogusVerificationRequest}.nativeResponse", "{arguments}.0", 400, null, ["ok", "user"]]
+                            args:     ["{bogusVerificationRequest}.nativeResponse", "{arguments}.0", 401, null, ["ok", "user"]]
                         }
                     ]
                 },
+                // TODO:  Test resending a verification code
                 {
                     name: "Testing creating a user, end-to-end...",
                     type: "test",
@@ -225,14 +217,14 @@ fluid.defaults("gpii.express.user.api.signup.test.caseHolder", {
                             args: [ "{fullSignupInitialRequest}.options.user" ]
                         },
                         {
+                            listener: "gpii.express.user.api.signup.test.caseHolder.fullSignupVerifyEmail",
+                            event:    "{testEnvironment}.harness.smtp.events.onMessageReceived",
+                            args:     ["{fullSignupInitialRequest}", "{fullSignupVerifyVerificationRequest}", "{testEnvironment}"]
+                        },
+                        {
                             listener: "gpii.express.user.api.signup.test.caseHolder.verifyResponse",
                             event:    "{fullSignupInitialRequest}.events.onComplete",
                             args:     ["{fullSignupInitialRequest}.nativeResponse", "{arguments}.0", 200]
-                        },
-                        {
-                            listener: "gpii.express.user.api.signup.test.caseHolder.fullSignupVerifyEmail",
-                            event:    "{testEnvironment}.harness.smtp.events.messageReceived",
-                            args:     ["{fullSignupInitialRequest}", "{fullSignupVerifyVerificationRequest}", "{testEnvironment}"]
                         },
                         {
                             listener: "gpii.express.user.api.signup.test.caseHolder.verifyResponse",
