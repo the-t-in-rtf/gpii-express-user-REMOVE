@@ -6,7 +6,6 @@ var path        = require("path");
 var templateDir = path.resolve(__dirname, "../../src/templates");
 
 require("../../src/js/server/api");
-require("../../src/js/server/session");
 
 require("gpii-express");
 require("gpii-handlebars");
@@ -39,6 +38,11 @@ fluid.defaults("gpii.express.user.tests.harness", {
         {
             source: "{that}.options.timeout",
             target: "{that gpii.express.contentAware.router}.options.timeout"
+        },
+        // Make sure any mailer components are aware of our outgoing mail port
+        {
+            source: "{that}.options.mailPort",
+            target: "{that gpii.express.user.mailer}.options.transportOptions.port"
         }
     ],
     events: {
@@ -140,9 +144,14 @@ fluid.defaults("gpii.express.user.tests.harness", {
         smtp: {
             type: "gpii.test.mail.smtp",
             options: {
-                port: "{harness}.options.smtpPort",
+                port: "{harness}.options.mailPort",
                 listeners: {
-                    "ready": "{harness}.events.onMailReady.fire"
+                    "onReady": [
+                        { funcName: "fluid.log", args: ["mail server started and notifying parent..."]},
+                        {
+                            func: "{harness}.events.onMailReady.fire"
+                        }
+                    ]
                 }
             }
         }

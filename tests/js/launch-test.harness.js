@@ -8,5 +8,6 @@ require("./test-harness");
 
 gpii.express.user.tests.harness({
     pouchPort:  "9599",
-    apiPort:    "3959"
+    apiPort:    "3959",
+    mailPort:   "9225"
 });
