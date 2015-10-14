@@ -47,10 +47,35 @@ gpii.express.user.api.signup.test.caseHolder.verifyResponse = function (response
 
 // Listen for the email with the verification code and launch the verification request
 gpii.express.user.api.signup.test.caseHolder.fullSignupVerifyEmail = function (signupRequest, verificationRequest, testEnvironment) {
+    gpii.express.user.api.signup.test.caseHolder.extractVerificationCode(testEnvironment).then(gpii.express.user.api.signup.test.caseHolder.checkVerificationCode).then(function (code) {
+        signupRequest.code = code;
+        var path = "/api/user/verify/" + signupRequest.code;
+
+        // I can't fix this with the model, so I have to override it completely
+        verificationRequest.options.path = path;
+        verificationRequest.send({}, { headers: { "Accept": "application/json" }});
+    });
+};
+
+gpii.express.user.api.signup.test.caseHolder.checkVerificationCode = function (code) {
+    jqUnit.assertNotNull("There should be a verification code in the email sent to the user.", code);
+
+    return code;
+};
+
+gpii.express.user.api.signup.test.caseHolder.checkEnvironmentForVerificationCode = function (testEnvironment) {
+    gpii.express.user.api.signup.test.caseHolder.extractVerificationCode(testEnvironment).then(gpii.express.user.api.signup.test.caseHolder.checkVerificationCode);
+};
+
+
+
+gpii.express.user.api.signup.test.caseHolder.extractVerificationCode = function (testEnvironment) {
     var content = fs.readFileSync(testEnvironment.harness.smtp.mailServer.currentMessageFile, "utf8");
 
+    var promise = fluid.promise();
+
     var MailParser = require("mailparser").MailParser,
-    mailparser = new MailParser({debug: false});
+        mailparser = new MailParser({debug: false});
 
     // If this gets any deeper, refactor to use a separate function
     mailparser.on("end", function (mailObject) {
@@ -58,21 +83,30 @@ gpii.express.user.api.signup.test.caseHolder.fullSignupVerifyEmail = function (s
         var verificationCodeRegexp = new RegExp("https?://[^/]+/api/user/verify/([a-z0-9-]+)", "i");
         var matches = content.toString().match(verificationCodeRegexp);
 
-        jqUnit.assertNotNull("There should be a verification code in the email sent to the user.", matches);
-
         if (matches) {
-            signupRequest.code = matches[1];
-            var path = "/api/user/verify/" + signupRequest.code;
-
-            // I can't fix this with the model, so I have to override it completely
-            verificationRequest.options.path = path;
-            verificationRequest.send({}, { headers: { "Accept": "application/json" }});
+            promise.resolve(matches[1]);
+        }
+        else {
+            promise.reject();
         }
     });
 
     mailparser.write(content);
     mailparser.end();
+
+    return promise;
 };
+
+fluid.defaults("gpii.express.user.api.signup.test.request", {
+    gradeNames: ["kettle.test.request.httpCookie"],
+    path: {
+        expander: {
+            funcName: "fluid.stringTemplate",
+            args:     ["%apiUrl%endpoint", { apiUrl: "{testEnvironment}.options.apiUrl", endpoint: "{that}.options.endpoint"}]
+        }
+    },
+    port: "{testEnvironment}.options.apiPort"
+});
 
 // Each test has a request instance of `kettle.test.request.http` or `kettle.test.request.httpCookie`, and a test module that wires the request to the listener that handles its results.
 fluid.defaults("gpii.express.user.api.signup.test.caseHolder", {
@@ -82,54 +116,51 @@ fluid.defaults("gpii.express.user.api.signup.test.caseHolder", {
             type: "kettle.test.cookieJar"
         },
         duplicateUserCreateRequest: {
-            type: "kettle.test.request.httpCookie",
+            type: "gpii.express.user.api.signup.test.request",
             options: {
-                path: {
-                    expander: {
-                        funcName: "fluid.stringTemplate",
-                        args:     ["%apiUrl%endpoint", { apiUrl: "{testEnvironment}.options.apiUrl", endpoint: "signup"}]
-                    }
-                },
-                port: "{testEnvironment}.options.apiPort",
-                method: "POST"
+                endpoint: "signup",
+                method:   "POST"
             }
         },
         incompleteUserCreateRequest: {
-            type: "kettle.test.request.httpCookie",
+            type: "gpii.express.user.api.signup.test.request",
             options: {
-                path: {
-                    expander: {
-                        funcName: "fluid.stringTemplate",
-                        args:     ["%apiUrl%endpoint", { apiUrl: "{testEnvironment}.options.apiUrl", endpoint: "signup"}]
-                    }
-                },
-                port: "{testEnvironment}.options.apiPort",
-                method: "POST"
+                endpoint: "signup",
+                method:   "POST"
             }
         },
         bogusVerificationRequest: {
-            type: "kettle.test.request.httpCookie",
+            type: "gpii.express.user.api.signup.test.request",
             options: {
-                path: {
-                    expander: {
-                        funcName: "fluid.stringTemplate",
-                        args:     ["%apiUrl%endpoint", { apiUrl: "{testEnvironment}.options.apiUrl", endpoint: "verify/xxxxxxxxx"}]
-                    }
-                },
-                port: "{testEnvironment}.options.apiPort",
+                endpoint: "verify/xxxxxxxxx",
                 method: "GET"
             }
         },
-        fullSignupInitialRequest: {
-            type: "kettle.test.request.httpCookie",
+        resendVerification: {
+            type: "gpii.express.user.api.signup.test.request",
             options: {
-                path: {
-                    expander: {
-                        funcName: "fluid.stringTemplate",
-                        args:     ["%apiUrl%endpoint", { apiUrl: "{testEnvironment}.options.apiUrl", endpoint: "signup"}]
-                    }
-                },
-                port: "{testEnvironment}.options.apiPort",
+                endpoint: "verify/resend",
+                method: "POST"
+            }
+        },
+        resendVerificationForVerifiedUser: {
+            type: "gpii.express.user.api.signup.test.request",
+            options: {
+                endpoint: "verify/resend",
+                method: "POST"
+            }
+        },
+        resendVerificationForBogusUser: {
+            type: "gpii.express.user.api.signup.test.request",
+            options: {
+                endpoint: "verify/resend",
+                method: "POST"
+            }
+        },
+        fullSignupInitialRequest: {
+            type: "gpii.express.user.api.signup.test.request",
+            options: {
+                endpoint: "signup",
                 user: {
                     expander: {
                         funcName: "gpii.express.user.api.signup.test.generateUser"
@@ -146,16 +177,10 @@ fluid.defaults("gpii.express.user.api.signup.test.caseHolder", {
             }
         },
         fullSignupLoginRequest: {
-            type: "kettle.test.request.httpCookie",
+            type: "gpii.express.user.api.signup.test.request",
             options: {
-                path: {
-                    expander: {
-                        funcName: "fluid.stringTemplate",
-                        args:     ["%apiUrl%endpoint", { apiUrl: "{testEnvironment}.options.apiUrl", endpoint: "login"}]
-                    }
-                },
-                port: "{testEnvironment}.options.apiPort",
-                method: "POST"
+                endpoint: "login",
+                method:   "POST"
             }
         }
     },
@@ -207,7 +232,56 @@ fluid.defaults("gpii.express.user.api.signup.test.caseHolder", {
                         }
                     ]
                 },
-                // TODO:  Test resending a verification code
+                {
+                    name: "Testing resending a verification code for an unverified user...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{resendVerification}.send",
+                            args: [ { email: "unverified@localhost"} ]
+                        },
+                        {
+                            listener: "gpii.express.user.api.signup.test.caseHolder.checkEnvironmentForVerificationCode",
+                            event:    "{testEnvironment}.harness.smtp.mailServer.events.onMessageReceived",
+                            args:     ["{testEnvironment}"]
+                        },
+                        {
+                            listener: "gpii.express.user.api.signup.test.caseHolder.verifyResponse",
+                            event:    "{resendVerification}.events.onComplete",
+                            args:     ["{resendVerification}.nativeResponse", "{arguments}.0", 200]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing resending a verification code for a verified user (HTTP response)...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{resendVerificationForVerifiedUser}.send",
+                            args: [ { email: "existing@localhost"} ]
+                        },
+                        {
+                            listener: "gpii.express.user.api.signup.test.caseHolder.verifyResponse",
+                            event:    "{resendVerificationForVerifiedUser}.events.onComplete",
+                            args:     ["{resendVerificationForVerifiedUser}.nativeResponse", "{arguments}.0", 200]
+                        }
+                    ]
+                },
+                {
+                    name: "Testing resending a verification code for a bogus user (HTTP response)...",
+                    type: "test",
+                    sequence: [
+                        {
+                            func: "{resendVerificationForBogusUser}.send",
+                            args: [ { email: "bogus@localhost"} ]
+                        },
+                        {
+                            listener: "gpii.express.user.api.signup.test.caseHolder.verifyResponse",
+                            event:    "{resendVerificationForBogusUser}.events.onComplete",
+                            args:     ["{resendVerificationForBogusUser}.nativeResponse", "{arguments}.0", 404]
+                        }
+                    ]
+                },
                 {
                     name: "Testing creating a user, end-to-end...",
                     type: "test",

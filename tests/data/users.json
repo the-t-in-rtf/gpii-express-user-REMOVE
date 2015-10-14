@@ -13,16 +13,17 @@
             "verified":    true
         },
         {
-            "_id":         "org.couchdb.user:unverified",
-            "type":        "user",
-            "name":        "unverified",
-            "username":    "unverified",
-            "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
-            "salt":        "secret",
-            "iterations":  10,
-            "email":       "unverified@localhost",
-            "roles":       ["role1", "role2"],
-            "verified":    false
+            "_id":               "org.couchdb.user:unverified",
+            "type":              "user",
+            "name":              "unverified",
+            "username":          "unverified",
+            "derived_key":       "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
+            "verification_code": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
+            "salt":              "secret",
+            "iterations":        10,
+            "email":             "unverified@localhost",
+            "roles":             ["role1", "role2"],
+            "verified":          false
         },
         {
             "_id":         "org.couchdb.user:existing",

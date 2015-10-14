@@ -14,9 +14,9 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
-fluid.registerNamespace("gpii.express.user.resend.verify.handler");
+fluid.registerNamespace("gpii.express.user.api.verify.resend.handler");
 
-gpii.express.user.resend.verify.handler.sendVerificationMessage = function (that, user) {
+gpii.express.user.api.verify.resend.handler.sendVerificationMessage = function (that, user) {
     var mailOptions = fluid.copy(that.options.mailDefaults);
     mailOptions.to  = that.request.body.email;
 
@@ -25,48 +25,69 @@ gpii.express.user.resend.verify.handler.sendVerificationMessage = function (that
     that.mailer.sendMessage(mailOptions, templateContext); // The mailer listeners will take care of the response from here.
 };
 
-gpii.express.user.resend.verify.handler.checkVerificationCode = function (that, user) {
-    if (user.verified) {
+gpii.express.user.api.verify.resend.handler.getVerificationCode = function (that, user) {
+    if (!user || !user.username) {
+        that.sendFinalResponse(404, { ok: false, message: "I couldn't find an account that matches the email address you provided."});
+    }
+    else if (user.verified) {
         that.sendFinalResponse(200, { ok: true, message: "Your account has already been verified."});
     }
     else if (!user.verification_code) {
         that.sendFinalResponse(500, { ok: false, message: "Cannot retrieve verification code.  Contact an administrator."});
     }
     else {
-        gpii.express.user.resend.verify.handler.sendVerificationMessage(that, user);
+        gpii.express.user.api.verify.resend.handler.sendVerificationMessage(that, user);
     }
 };
 
-fluid.defaults("gpii.express.user.resend.verify.handler", {
+fluid.defaults("gpii.express.user.api.verify.resend.handler", {
     gradeNames: ["gpii.express.handler"],
+    mailDefaults: {
+        from:    "test@localhost",
+        subject: "Please verify your account..."
+    },
+    templateDefaultContext: {
+        app: "{gpii.express}.options.config.app"
+    },
+    invokers: {
+        handleRequest: {
+            func: "{reader}.get",
+            args: ["{that}.request.body"]
+        }
+    },
     components: {
         reader: {
-            type: "",
+            type: "gpii.express.user.couchdb.read",
             options: {
-                url:     "{gpii.express.user.api.resend.verify}.options.urls.read",
-                termMap: { "code": "%code" },
+                url:     "{gpii.express.user.api.verify.resend}.options.urls.read",
+                rules: {
+                    read: {
+                        "":         "rows.0.value"
+                    }
+                },
+                termMap: { "email": "%email" },
                 listeners: {
-                    "onRead.checkVerificationCode": {
-                        funcName: "gpii.express.user.resend.verify.handler.checkVerificationCode",
-                        args:     ["{gpii.express.user.resend.verify.handler}", "{arguments}.0"],
+                    "onRead.getVerificationCode": {
+                        funcName: "gpii.express.user.api.verify.resend.handler.getVerificationCode",
+                        args:     ["{gpii.express.user.api.verify.resend.handler}", "{arguments}.0"],
                         priority: "last"
                     }
                 }
             }
         },
         mailer: {
-            type: "gpii.mailer.smtp.handlebars",
+            type: "gpii.express.user.mailer.handlebars",
             options: {
                 templateDir:     "{gpii.express.user.api.verify.resend}.options.templateDir",
-                htmlTemplateKey: "{gpii.express.user.api.verify.resend}.options.templates.mail.html",
-                textTemplateKey: "{gpii.express.user.api.verify.resend}.options.templates.mail.text",
+                htmlTemplateKey: "email-verify-html",
+                textTemplateKey: "email-verify-text",
                 listeners: {
                     "onSuccess.sendResponse": {
-                        func: "{gpii.express.user.resend.verify.handler}.sendFinalResponse",
+                        func: "{gpii.express.user.api.verify.resend.handler}.sendFinalResponse",
                         args: [200, { ok: true, message: "Your verification code has been resent.  Please check your email for details."}]
                     },
                     "onError.sendResponse": {
-                        func: "{gpii.express.user.resend.verify.handler}.sendFinalResponse",
+                        func: "{gpii.express.user.api.verify.resend.handler}.sendFinalResponse",
                         args: [500, { ok: false, message: "A verification code could not be sent to you via email.  Contact an administrator."}]
                     }
                 }
@@ -76,25 +97,25 @@ fluid.defaults("gpii.express.user.resend.verify.handler", {
     }
 });
 
-fluid.registerNamespace("gpii.express.user.resend.verify.handler.html");
+fluid.registerNamespace("gpii.express.user.api.verify.resend.handler.html");
 
-gpii.express.user.resend.verify.handler.html.sendFinalResponse = function (that, statusCode, context) {
+gpii.express.user.api.verify.resend.handler.html.sendFinalResponse = function (that, statusCode, context) {
     that.response.status(statusCode).render(that.options.templateKey, context);
 };
 
-fluid.defaults("gpii.express.user.resend.verify.handler.html", {
-    gradeNames: ["gpii.express.user.resend.verify.handler"],
-    templateKey: "{gpii.express.user.api.resend.verify}.options.templates.html",
+fluid.defaults("gpii.express.user.api.verify.resend.handler.html", {
+    gradeNames: ["gpii.express.user.api.verify.resend.handler"],
+    templateKey: "{gpii.express.user.api.verify.resend}.options.templates.html",
     invokers: {
         sendFinalResponse: {
-            funcName: "gpii.express.user.resend.verify.handler.text.sendFinalResponse",
+            funcName: "gpii.express.user.api.verify.resend.handler.text.sendFinalResponse",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"] // status code, template context
         }
     }
 });
 
-fluid.defaults("gpii.express.user.resend.verify.handler.json", {
-    gradeNames: ["gpii.express.user.resend.verify.handler"],
+fluid.defaults("gpii.express.user.api.verify.resend.handler.json", {
+    gradeNames: ["gpii.express.user.api.verify.resend.handler"],
     invokers: {
         sendFinalResponse: {
             func: "{that}.sendResponse",
@@ -103,32 +124,45 @@ fluid.defaults("gpii.express.user.resend.verify.handler.json", {
     }
 });
 
-fluid.defaults("gpii.express.user.api.resend.verify", {
-    gradeNames: ["gpii.express.contentAware.router"],
-    templates: {
-        html: "pages/verify-resend",
-        mail: {
-            text: "email-verify-text",
-            html: "email-verify-html"
-        }
-    },
+fluid.defaults("gpii.express.user.api.verify.resend", {
+    gradeNames: ["gpii.express.router.passthrough"],
+    path:       "/verify/resend",
+    method:     "use",
     urls: {
         read: {
             expander: {
                 funcName: "fluid.stringTemplate",
-                args:     [ "%userDbUrl/_design/lookup/_view/byVerificationCode?key=\"%code\"", "{that}.options.couch"]
+                args:     ["%userDbUrl/_design/lookup/_view/byUsernameOrEmail?key=\"%email\"", "{that}.options.couch"]
             }
         }
     },
-    handlers: {
-        json: {
-            contentType:   "application/json",
-            handlerGrades: ["gpii.express.user.api.verify.resend.handler.json"]
+    components: {
+        postRouter: {
+            type: "gpii.express.contentAware.router",
+            options: {
+                path: ["/"],
+                templates: {
+                    html: "pages/verify-resend-receipt"
+                },
+                handlers: {
+                    json: {
+                        contentType:   "application/json",
+                        handlerGrades: ["gpii.express.user.api.verify.resend.handler.json"]
+                    },
+                    text: {
+                        contentType:   ["text/html", "text/plain"],
+                        handlerGrades: ["gpii.express.user.api.verify.resend.handler.html"]
+                    }
+                },
+                method: "post"
+            }
         },
-        text: {
-            contentType:   ["text/html", "text/plain"],
-            handlerGrades: ["gpii.express.user.api.verify.resend.handler.html"]
+        formRouter: {
+            type: "gpii.express.user.api.singleTemplateRouter",
+            options: {
+                templateKey: "pages/verify-resend",
+                method:      "get"
+            }
         }
     }
-
 });

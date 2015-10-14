@@ -13,7 +13,7 @@
             that.applier.change("errorMessage", null);
         }
         else {
-            that.applier.change("errorMessage", that.options.messages.passwordsDontMatch);
+            that.applier.change("errorMessage", that.options.messages.passwordsDontMatch.message);
         }
     };
 

@@ -1,17 +1,21 @@
 <html>
     <head>
-        <title>Resend your verification code.</title>
+        <title>"Resend Verification Code" Form (used for client-side tests)</title>
 
         {{>common-includes}}
 
+        <!-- Bring in client library being tested -->
+        <script type="text/javascript" src="/js/client/resend.js"></script>
     </head>
     <body>
+        <!-- Sample "resend verification code" form with all required markup -->
         <div class="row">
-            <div class="column small-12">
-                {{>common-message}}
-            </div>
+            <div class="resend-viewport"/>
         </div>
+
+        {{{initBlock "gpii.express.user.frontend.resend"}}}
     </body>
 </html>
+
 
 
