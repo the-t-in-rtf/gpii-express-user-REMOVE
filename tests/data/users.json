@@ -1,9 +1,10 @@
 {
     "docs": [
         {
-            "_id":         "sample",
+            "_id":         "org.couchdb.user:sample",
             "type":        "user",
             "name":        "sample",
+            "username":    "sample",
             "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
             "salt":        "secret",
             "iterations":  10,
@@ -12,8 +13,10 @@
             "verified":    true
         },
         {
+            "_id":         "org.couchdb.user:unverified",
             "type":        "user",
             "name":        "unverified",
+            "username":    "unverified",
             "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
             "salt":        "secret",
             "iterations":  10,
@@ -22,9 +25,10 @@
             "verified":    false
         },
         {
-            "_id":         "existing",
+            "_id":         "org.couchdb.user:existing",
             "type":        "user",
             "name":        "existing",
+            "username":    "existing",
             "derived_key": "dd11a6d074786fc914cbcdbc7ec5a06ad002812a",
             "salt":        "secret",
             "iterations":  10,
@@ -36,7 +40,7 @@
             "_id": "_design/lookup",
             "views": {
                 "byUsernameOrEmail": {
-                    "map": "function (doc) {\n if (doc.type === 'user') { emit (doc.name, doc); \n emit (doc.email, doc); \n } \n}"
+                    "map": "function (doc) {\n if (doc.type === 'user') { emit(doc.username, doc); \n emit(doc.email, doc); \n } \n}"
                 },
                 "byVerificationCode": {
                     "map": "function (doc) {\n if (doc.verification_code) { emit(doc.verification_code, doc); \n } \n}"

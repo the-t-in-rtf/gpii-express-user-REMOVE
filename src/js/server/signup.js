@@ -31,6 +31,8 @@ gpii.express.user.api.signup.post.handler.checkForExistingUser = function (that,
     var code        = gpii.express.user.password.generateSalt(that.options.verifyCodeLength);
 
     var combinedRecord                   = fluid.copy(that.request.body);
+    // Set the "name" to the username for backward compatibility with CouchDB
+    combinedRecord.name                  = combinedRecord.username;
     combinedRecord.salt                  = salt;
     combinedRecord.derived_key           = derived_key;
     combinedRecord[that.options.codeKey] = code;
@@ -42,6 +44,9 @@ gpii.express.user.api.signup.post.handler.checkForExistingUser = function (that,
     fluid.each(that.options.userDefaults, function (value, key) {
         combinedRecord[key] = value;
     });
+
+    // Set the ID to match the CouchDB conventions, for backward compatibility
+    combinedRecord._id = "org.couch.db.user:" + combinedRecord.username;
 
     // Write the record to couch.  TODO: Migrate this to a writable dataSource.
     var writeOptions = {
@@ -154,7 +159,7 @@ fluid.defaults("gpii.express.user.api.signup.post", {
         target: "{that gpii.express.handler}.options.rules"
     },
     termMaps: {
-        read: { username: "%name", email: "%email"}
+        read: { username: "%username", email: "%email"}
     },
     mailDefaults: {
         from:    "test@localhost",
