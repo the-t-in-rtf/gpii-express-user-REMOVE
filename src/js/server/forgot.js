@@ -100,7 +100,7 @@ fluid.defaults("gpii.express.user.api.forgot.post.handler", {
             }
         },
         mailer: {
-            type: "gpii.mailer.smtp.handlebars",
+            type: "gpii.express.user.mailer.handlebars",
             options: {
                 templateDir:     "{gpii.express.user.api.forgot}.options.templateDir",
                 htmlTemplateKey: "{gpii.express.user.api.forgot}.options.templates.mail.html",

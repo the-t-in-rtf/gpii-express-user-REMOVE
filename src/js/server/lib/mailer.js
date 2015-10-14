@@ -20,17 +20,10 @@ var smtpTransport = require("nodemailer-smtp-transport");
 var path        = require("path");
 var templateDir = path.resolve(__dirname, "../../src/templates");
 
-
 require("gpii-handlebars");
 require("./standaloneRenderer");
 
-fluid.registerNamespace("gpii.mailer.smtp");
-
-// Initialize the transport we use to send messages and our rendering engine.  See above for documentation of
-// `options.transportOptions`.
-gpii.mailer.smtp.init = function (that) {
-    that.transport = nodemailer.createTransport(smtpTransport(that.options.transportOptions));
-};
+fluid.registerNamespace("gpii.express.user.mailer");
 
 // Send a message using `nodemailer-smtp-transport`.  Here is a basic example of typical `mailOptions`:
 //
@@ -46,15 +39,16 @@ gpii.mailer.smtp.init = function (that) {
 // Note that the `to` and `cc` elements can also be passed an array of email addresses.  The full syntax available for
 // `mailOptions` can be found in [the nodemailer documentation](https://github.com/andris9/Nodemailer).
 //
-gpii.mailer.smtp.sendMessage = function (that, mailOptions) {
-    that.transport.sendMail(mailOptions, that.handleSendResult);
+gpii.express.user.mailer.sendMessage = function (that, mailOptions) {
+    var transport = nodemailer.createTransport(smtpTransport(that.options.transportOptions));
+    transport.sendMail(mailOptions, that.handleSendResult);
 };
 
 // When we know the results of sending the message, fire an appropriate event so that other components can take action.
 // Fires an `onError` event if an error is received, and passes along the error message and stack.  If the message is
 // sent successfully, an `onSuccess` event is fired and the `info` object is passed along.
 //
-gpii.mailer.smtp.handleSendResult = function (that, err, info) {
+gpii.express.user.mailer.handleSendResult = function (that, err, info) {
     if (err) {
         that.events.onError.fire({ message: err.message, stack: err.stack});
     }
@@ -63,7 +57,7 @@ gpii.mailer.smtp.handleSendResult = function (that, err, info) {
     }
 };
 
-fluid.defaults("gpii.mailer.smtp", {
+fluid.defaults("gpii.express.user.mailer", {
     gradeNames: ["fluid.component"],
     transportOptions: {
         ignoreTLS: true
@@ -77,15 +71,11 @@ fluid.defaults("gpii.mailer.smtp", {
             funcName: "fluid.notImplemented"
         },
         handleSendResult: {
-            funcName: "gpii.mailer.smtp.handleSendResult",
+            funcName: "gpii.express.user.mailer.handleSendResult",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"] // err, info
         }
     },
     listeners: {
-        "onCreate.init": {
-            funcName: "gpii.mailer.smtp.init",
-            args:     ["{that}"]
-        },
         "onError.log": {
             funcName: "fluid.log",
             args:     ["Message transport failed:", "{arguments}.0"]
@@ -98,18 +88,18 @@ fluid.defaults("gpii.mailer.smtp", {
 });
 
 // Mailer for use with plain text content.
-fluid.defaults("gpii.mailer.smtp.text", {
-    gradeNames: ["gpii.mailer.smtp"],
+fluid.defaults("gpii.express.user.mailer.text", {
+    gradeNames: ["gpii.express.user.mailer"],
     invokers: {
         sendMessage: {
-            funcName: "gpii.mailer.smtp.sendMessage",
+            funcName: "gpii.express.user.mailer.sendMessage",
             args:     ["{that}", "{arguments}.0"] // Options to pass to nodemailer's `sendMail` function.
         }
     }
 });
 
 
-fluid.registerNamespace("gpii.mailer.smtp.handlebars");
+fluid.registerNamespace("gpii.express.user.mailer.handlebars");
 
 // Transform a message using handlebars before sending it. If `options.templates.html` is found, the message will
 // include an html body.  If `options.templates.text` is found, the message will include a text body.  Both can be
@@ -119,7 +109,7 @@ fluid.registerNamespace("gpii.mailer.smtp.handlebars");
 // if you pass in `{ variable: "value" }` as the `context`, then `{{variable}}` would become `value` in the final
 // output.
 //
-gpii.mailer.smtp.handlebars.sendTemplateMessage = function (that, mailOptions, context) {
+gpii.express.user.mailer.handlebars.sendTemplateMessage = function (that, mailOptions, context) {
     var fullMailOptions = mailOptions ? mailOptions : {};
 
     if (!that.options.textTemplateKey && !that.options.htmlTemplateKey) {
@@ -136,7 +126,7 @@ gpii.mailer.smtp.handlebars.sendTemplateMessage = function (that, mailOptions, c
         fullMailOptions.html = html;
     }
 
-    gpii.mailer.smtp.sendMessage(that, fullMailOptions);
+    gpii.express.user.mailer.sendMessage(that, fullMailOptions);
 };
 
 // Mailer with support for template rendering.  Requires you to set `options.templateDir`.  To use this meaningfully, you
@@ -145,14 +135,14 @@ gpii.mailer.smtp.handlebars.sendTemplateMessage = function (that, mailOptions, c
 // 1. `options.textTemplateKey`: The template key for the text content of the email.
 // 2. `options.htmlTemplateKey`: The template key for the HTML content of the email.
 //
-fluid.defaults("gpii.mailer.smtp.handlebars", {
-    gradeNames:      ["gpii.mailer.smtp"],
+fluid.defaults("gpii.express.user.mailer.handlebars", {
+    gradeNames:      ["gpii.express.user.mailer"],
     templateDir:     templateDir,
     textTemplateKey: "email-text",
     htmlTemplateKey: "email-html",
     invokers: {
         sendMessage: {
-            funcName: "gpii.mailer.smtp.handlebars.sendTemplateMessage",
+            funcName: "gpii.express.user.mailer.handlebars.sendTemplateMessage",
             args:     ["{that}", "{arguments}.0", "{arguments}.1"] // `sendMail` options, data used in rendering template content.
         }
     },
@@ -160,7 +150,7 @@ fluid.defaults("gpii.mailer.smtp.handlebars", {
         handlebars: {
             type: "gpii.handlebars.standaloneRenderer",
             options: {
-                templateDir: "{gpii.mailer.smtp.handlebars}.options.templateDir"
+                templateDir: "{gpii.express.user.mailer.handlebars}.options.templateDir"
             }
         }
     }

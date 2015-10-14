@@ -108,7 +108,7 @@ fluid.defaults("gpii.express.user.api.signup.post.handler", {
             }
         },
         mailer: {
-            type: "gpii.mailer.smtp.handlebars",
+            type: "gpii.express.user.mailer.handlebars",
             options: {
                 templateDir:     "{gpii.express.user.api.signup.post}.options.templateDir",
                 htmlTemplateKey: "{gpii.express.user.api.signup.post}.options.htmlTemplateKey",
