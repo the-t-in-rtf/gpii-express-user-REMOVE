@@ -37,7 +37,7 @@ gpii.express.user.api.signup.post.handler.checkForExistingUser = function (that,
     combinedRecord.derived_key           = derived_key;
     combinedRecord[that.options.codeKey] = code;
 
-    // Make sure we don't inadvertantly save the original password to the database.
+    // Make sure we don't inadvertently save the original password to the database.
     delete combinedRecord.password;
     delete combinedRecord.confirm;
 
@@ -68,7 +68,7 @@ gpii.express.user.api.signup.post.handler.checkForExistingUser = function (that,
 
         var templateContext = fluid.copy(that.options.templateDefaultContext);
         templateContext.user = combinedRecord;
-        that.mailer.sendMessage(mailOptions, templateContext); // The mailer listeners will take care of the response from here.
+        that.mailer.sendMessage(mailOptions, templateContext); // Our listeners will monitor the mailer and continue from there.
     });
 };
 
