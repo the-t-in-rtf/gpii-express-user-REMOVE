@@ -145,18 +145,16 @@ Returns a confirmation message indicating whether the response was successful.
 
 If a user has requested that their password be reset using the `GET /api/user/forgot/:email` API endpoint (see above), they will receive an email message that contains a link to this endpoint.
 
-By visiting this link, they are presented with a form that will allow them update their password using the `POST /api/user/reset` endpoint (see below)
+By visiting this link, they are presented with a form that will allow them update their password using the `POST /api/user/reset/:code` endpoint (see below)
 
 [Response schema](../schemas/user-message.json)
 
-## `POST /api/user/reset`
+## `POST /api/user/reset/:code`
 
 Allows a user to reset their password using a `code` received via email (see `GET /api/user/forgot/:email`).  The user is required to enter a valid `password` and to enter the same password in a `confirm` field, as in:
 
 ```
   {
-    "email": "totes.legit@mcgotes.com",
-    "code": "-code provided via email-",
     "password": "newPassword1",
     "confirm":  "newPassword1"
   }
