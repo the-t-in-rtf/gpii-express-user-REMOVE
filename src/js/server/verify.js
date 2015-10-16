@@ -1,3 +1,12 @@
+/*
+
+  Provides the REST endpoint for `/api/user/verify/:code`, which is the second stage in the self-sign up process.  If a
+  valid verification code is provided, the user's account will be flagged as verified.
+
+  This API requires a verification code, which is generated using the `/api/user/signup` process and sent to the user
+  via email.  The code can be resent by visiting `/api/user/verify/resend`.
+
+ */
 "use strict";
 var fluid  = fluid || require("infusion");
 var gpii   = fluid.registerNamespace("gpii");
@@ -7,17 +16,8 @@ var request = require("request");
 
 fluid.registerNamespace("gpii.express.user.api.verify.handler");
 
+require("./lib/datasource");
 require("./verify-resend");
-
-// Pass through an incoming request to the back end and display the response sanely
-gpii.express.user.api.verify.handler.passRequestToDataSource = function (that) {
-    if (!that.request.params || !that.request.params.code) {
-        that.sendFinalResponse(401, { ok: false, message: "You must provide a valid verification code to use this interface."});
-    }
-    else {
-        that.reader.get(that.request.params);
-    }
-};
 
 gpii.express.user.api.verify.handler.checkVerificationCode = function (that, dataSourceResponse) {
     if (!dataSourceResponse || !dataSourceResponse[that.options.codeKey] || (that.request.params.code !== dataSourceResponse[that.options.codeKey])) {
@@ -83,8 +83,8 @@ fluid.defaults("gpii.express.user.api.verify.handler", {
     },
     invokers: {
         handleRequest: {
-            funcName: "gpii.express.user.api.verify.handler.passRequestToDataSource",
-            args:     ["{that}"]
+            func: "{that}.reader.get",
+            args: ["{that}.request.params"]
         },
         sendFinalResponse: {
             funcName: "fluid.notImplemented"
@@ -123,7 +123,7 @@ fluid.defaults("gpii.express.user.api.verify.handler.json", {
 
 fluid.defaults("gpii.express.user.api.verify", {
     gradeNames: ["gpii.express.router.passthrough"],
-    path:       ["/"],
+    path:       ["/verify"],
     method:     "use",
     codeKey:    "verification_code",  // Must match the value in gpii.express.user.api.verify
     urls: {
@@ -150,7 +150,7 @@ fluid.defaults("gpii.express.user.api.verify", {
         mainRouter: {
             type: "gpii.express.contentAware.router",
             options: {
-                path:        ["/verify/:code", "/verify"],
+                path:        ["/:code", "/"],
                 method:      "get",
                 handlers: {
                     text: {

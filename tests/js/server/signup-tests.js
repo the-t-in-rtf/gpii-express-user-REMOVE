@@ -16,9 +16,9 @@ require("../../../node_modules/gpii-express/tests/js/lib/test-helpers");
 require("../test-environment");
 
 require("../lib/generate-user");
+require("../lib/extract-code");
 
 var jqUnit       = require("jqUnit");
-var fs           = require("fs");
 
 fluid.registerNamespace("gpii.express.user.api.signup.test.caseHolder");
 
@@ -47,7 +47,7 @@ gpii.express.user.api.signup.test.caseHolder.verifyResponse = function (response
 
 // Listen for the email with the verification code and launch the verification request
 gpii.express.user.api.signup.test.caseHolder.fullSignupVerifyEmail = function (signupRequest, verificationRequest, testEnvironment) {
-    gpii.express.user.api.signup.test.caseHolder.extractVerificationCode(testEnvironment).then(gpii.express.user.api.signup.test.caseHolder.checkVerificationCode).then(function (code) {
+    gpii.express.user.api.signup.test.caseHolder.extractVerificationCode(testEnvironment).then(gpii.express.user.api.signup.test.caseHolder.checkResetCode).then(function (code) {
         signupRequest.code = code;
         var path = "/api/user/verify/" + signupRequest.code;
 
@@ -64,37 +64,11 @@ gpii.express.user.api.signup.test.caseHolder.checkVerificationCode = function (c
 };
 
 gpii.express.user.api.signup.test.caseHolder.checkEnvironmentForVerificationCode = function (testEnvironment) {
-    gpii.express.user.api.signup.test.caseHolder.extractVerificationCode(testEnvironment).then(gpii.express.user.api.signup.test.caseHolder.checkVerificationCode);
+    gpii.express.user.api.signup.test.caseHolder.extractVerificationCode(testEnvironment).then(gpii.express.user.api.signup.test.caseHolder.checkResetCode);
 };
 
-
-
 gpii.express.user.api.signup.test.caseHolder.extractVerificationCode = function (testEnvironment) {
-    var content = fs.readFileSync(testEnvironment.harness.smtp.mailServer.currentMessageFile, "utf8");
-
-    var promise = fluid.promise();
-
-    var MailParser = require("mailparser").MailParser,
-        mailparser = new MailParser({debug: false});
-
-    // If this gets any deeper, refactor to use a separate function
-    mailparser.on("end", function (mailObject) {
-        var content = mailObject.text;
-        var verificationCodeRegexp = new RegExp("https?://[^/]+/api/user/verify/([a-z0-9-]+)", "i");
-        var matches = content.toString().match(verificationCodeRegexp);
-
-        if (matches) {
-            promise.resolve(matches[1]);
-        }
-        else {
-            promise.reject();
-        }
-    });
-
-    mailparser.write(content);
-    mailparser.end();
-
-    return promise;
+    return gpii.express.user.api.test.extractCode(testEnvironment, "https?://[^/]+/api/user/verify/([a-z0-9-]+)");
 };
 
 fluid.defaults("gpii.express.user.api.signup.test.request", {

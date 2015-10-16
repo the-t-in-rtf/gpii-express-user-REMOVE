@@ -77,9 +77,19 @@ fluid.defaults("gpii.express.user.tests.harness", {
                 },
                 components: {
                     handlebars: {
-                        type: "gpii.express.hb"
+                        type: "gpii.express.hb",
+                        options: {
+                            components: {
+                                initBlock: {
+                                    options: {
+                                        contextToOptionsRules: {
+                                            req: "req"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     },
-
                     // Front-end content used by some GET calls
                     modules: {
                         type:  "gpii.express.router.static",

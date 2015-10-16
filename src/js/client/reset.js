@@ -1,22 +1,26 @@
-// Provide a front-end to /api/user/reset
-// The second part of the password reset process, can only be used with a code generated using the "forgot password" form.
-/* global fluid, jQuery, window */
+// Provides a front-end to `/api/user/reset/:code`, which allows user to reset their password.  This is the second stage
+// of the password reset process, and can only be used with a code generated using the "forgot password" form (see
+// `/api/user/forgot`).
+//
+/* global fluid, jQuery */
 (function () {
     "use strict";
-    var gpii = fluid.registerNamespace("gpii");
     fluid.registerNamespace("gpii.express.user.frontend.reset");
-
-    gpii.express.user.frontend.reset.extractQueryParams = function () {
-        var rawQuery = fluid.url.parseUri(window.location.href);
-        return rawQuery.queryKey;
-    };
 
     fluid.defaults("gpii.express.user.frontend.reset", {
         gradeNames: ["gpii.express.user.frontend.canHandleStrings", "gpii.express.user.frontend.passwordCheckingForm"],
         container:  ".reset-viewport",
         ajaxOptions: {
             type:    "POST",
-            url:     "/api/user/reset"
+            url:     {
+                expander: {
+                    funcName: "fluid.stringTemplate",
+                    args:     ["/api/user/reset/%code", { code: "{that}.model.code"}]
+                }
+            }
+        },
+        model: {
+            code: "{that}.options.req.params.code"
         },
         rules: {
             successResponseToModel: {
@@ -30,25 +34,11 @@
             error:   "common-error",
             initial: "reset-viewport"
         },
-        model: {
-            code:     "{that}.model.req.query.code",
-            req: {
-                query: {
-                    expander: {
-                        funcName: "gpii.express.user.frontend.reset.extractQueryParams"
-                    }
-                }
-            }
-        },
         selectors: {
-            initial:              "",
-            success:              ".reset-success",
-            error:                ".reset-error",
-            submit:               ".reset-button",
-            code:                 "input[name='code']"
-        },
-        bindings: {
-            "code":     "code"
+            initial: "",
+            success: ".reset-success",
+            error:   ".reset-error",
+            submit:  ".reset-button"
         }
     });
 })(jQuery);

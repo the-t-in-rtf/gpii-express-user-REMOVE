@@ -14,6 +14,8 @@
 var fluid = fluid || require("infusion");
 var gpii  = fluid.registerNamespace("gpii");
 
+require("./lib/singleTemplateRouter");
+
 fluid.registerNamespace("gpii.express.user.api.verify.resend.handler");
 
 gpii.express.user.api.verify.resend.handler.sendVerificationMessage = function (that, user) {
@@ -126,7 +128,7 @@ fluid.defaults("gpii.express.user.api.verify.resend.handler.json", {
 
 fluid.defaults("gpii.express.user.api.verify.resend", {
     gradeNames: ["gpii.express.router.passthrough"],
-    path:       "/verify/resend",
+    path:       "/resend",
     method:     "use",
     urls: {
         read: {

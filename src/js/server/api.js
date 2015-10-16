@@ -13,7 +13,7 @@ require("./docs.js");
 require("./forgot.js");
 require("./login.js");
 require("./logout.js");
-//require("./reset.js");
+require("./reset.js");
 require("./signup.js");
 require("./verify.js");
 
@@ -91,9 +91,9 @@ fluid.defaults("gpii.express.user.api", {
         logout: {
             type: "gpii.express.user.api.logout"
         },
-        //reset: {
-        //    type: "gpii.express.user.api.reset"
-        //},
+        reset: {
+            type: "gpii.express.user.api.reset"
+        },
         signup: {
             type: "gpii.express.user.api.signup"
         },

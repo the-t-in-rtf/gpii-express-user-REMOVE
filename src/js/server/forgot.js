@@ -163,10 +163,10 @@ fluid.defaults("gpii.express.user.api.forgot", {
             }
         }
     },
-    // Both of these should match what is used in `gpii.express.user.api.reset`
-    resetCodeKey:   "resetCode",
     resetCodeLength: 16,
-    codeIssuedKey:   "resetCodeIssued",
+    // Both of these should match what is used in `gpii.express.user.api.reset`
+    resetCodeKey:   "reset_code",
+    codeIssuedKey:  "reset_code_issued",
     mailDefaults:    {
         from:    "noreply@localhost",
         subject: "Reset your password..."
