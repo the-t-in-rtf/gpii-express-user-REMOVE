@@ -21,7 +21,7 @@
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#102d082ec36ef46875670079abeb022d07ae3bcd",
     "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#4912292d3ebd4e0dc50b9ebb69e10fd85bb45e6c",
     "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#5ce52ac33c081766171ae2b241f917d019eb9a6f",
-    "gpii-mail-test": "git://github.com/the-t-in-rtf/gpii-mail-test.git#daa72c4854d696e3cca431bb12b310ce6d8606a6",
+    "gpii-mail-test": "git://github.com/the-t-in-rtf/gpii-mail-test.git#3459227b8af02340f1d2d0d8aba64611ed3620bc",
     "grunt": "0.4.4",
     "grunt-contrib-jshint": "0.9.0",
     "grunt-gpii": "git://github.com/GPII/grunt-gpii.git#58ae055833f437a9e91baedb9f39a22c5fdd727f",
@@ -35,11 +35,11 @@
     "request": "^2.63.0"
   },
   "devDependencies": {
-    "cookie": "^0.2.0",
+    "cookie":     "^0.2.0",
     "gpii-pouch": "git://github.com/the-t-in-rtf/gpii-pouchdb.git#8807d10c4d33fc212958eb53366368fddfe5f7b5",
-    "jqUnit": "git://github.com/fluid-project/node-jqUnit.git#d46bb932fa4069770852c51a92182939958f2d75",
-    "kettle": "git://github.com/amb26/kettle.git#5859890a80794efe6797aed520efae39f8c66851",
+    "jqUnit":     "git://github.com/fluid-project/node-jqUnit.git#d46bb932fa4069770852c51a92182939958f2d75",
+    "kettle":     "git://github.com/amb26/kettle.git#5859890a80794efe6797aed520efae39f8c66851",
     "mailparser": "^0.5.2",
-    "zombie": "3.0.15"
+    "zombie":     "3.0.15"
   }
 }

@@ -11,7 +11,7 @@ var gpii       = fluid.registerNamespace("gpii");
 var jqUnit     = fluid.require("jqUnit");
 var Browser    = require("zombie");
 
-var isBrowserSane = require("./browser-sanity.js");
+require("./browser-sanity.js");
 
 require("../test-harness.js");
 var harness = gpii.express.user.tests.harness({
@@ -27,14 +27,14 @@ function runTests() {
     jqUnit.asyncTest("Login with a valid username and password...", function () {
         browser.visit(harness.options.apiUrl + "login").then(function () {
             jqUnit.start();
-            isBrowserSane(jqUnit, browser);
+            gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
-            browser.fill("username", "admin")
-                .fill("password", "admin")
+            browser.fill("username", "existing")
+                .fill("password", "password")
                 .pressButton("Log In", function () {
                     jqUnit.start();
-                    isBrowserSane(jqUnit, browser);
+                    gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
 
                     // The login form should no longer be visible
                     var loginForm = browser.window.$(".login-form");
@@ -49,7 +49,6 @@ function runTests() {
                     var toggle = browser.window.$(".user-controls-toggle");
                     var username = toggle.text().trim();
                     jqUnit.assertTrue("The profile username should not be undefined", username.indexOf("Not Logged In") === -1);
-                    console.log("username:" + username);
 
                     // There should be no alerts
                     var alert = browser.window.$(".alert");
@@ -77,7 +76,7 @@ function runTests() {
                     // browser.fire("click", ".user-controls-toggle", function () {
                     //    browser.fire("click", ".user-menu-logout", function () {
                     //        jqUnit.start();
-                    //        isBrowserSane(jqUnit, browser);
+                    //        gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
                     //
                     //        // The profile should no longer have data
                     //        var toggle = browser.window.$(".user-controls-toggle");
@@ -92,7 +91,7 @@ function runTests() {
     jqUnit.asyncTest("Login with an invalid username and password...", function () {
         browser.visit(harness.options.apiUrl + "login").then(function () {
             jqUnit.start();
-            isBrowserSane(jqUnit, browser);
+            gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser.fill("username", "bogus")

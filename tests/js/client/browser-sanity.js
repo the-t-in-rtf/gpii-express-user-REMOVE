@@ -1,5 +1,9 @@
 "use strict";
-module.exports = function (jqUnit, browser, status) {
+var fluid = fluid || require("infusion");
+var gpii  = fluid.registerNamespace("gpii");
+
+fluid.registerNamespace("gpii.express.user.api.tests");
+gpii.express.user.api.tests.isBrowserSane = function (jqUnit, browser, status) {
     if (!status) { status = 200; }
 
     jqUnit.assertEquals("The browser's status code should be appropriate.", status, browser.statusCode);

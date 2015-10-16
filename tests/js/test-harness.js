@@ -17,6 +17,7 @@ var bowerDir        = path.resolve(__dirname, "../../bower_components");
 var srcDir          = path.resolve(__dirname, "../../src");
 var modulesDir      = path.resolve(__dirname, "../../node_modules");
 
+// TODO:  Update this to use the new version of gpii-mail-test once we have a Zombie version that works in 0.12 or higher.
 fluid.defaults("gpii.express.user.tests.harness", {
     gradeNames: ["fluid.component"],
     pouchPort:  "9735",

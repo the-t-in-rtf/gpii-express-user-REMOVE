@@ -13,21 +13,20 @@ var Browser       = require("zombie");
 
 var fs            = require("fs");
 
-var isBrowserSane = require("./browser-sanity.js");
+require("./browser-sanity.js");
 
-require("./zombie-test-harness.js");
+require("../test-harness.js");
 
-var harness = gpii.express.couchuser.tests.harness({
+var harness = gpii.express.user.tests.harness({
     apiPort:   7532,
     pouchPort: 7542,
-    usersUrl:    "http://localhost:7542/_users",
-    smtpPort:    4089
+    mailPort:  4089
 });
 
 function runTests() {
     var browser;
 
-    jqUnit.module("End-to-end functional signup tests...", { "setup": function () { browser = new Browser({ continueOnError: true }); } });
+    jqUnit.module("End-to-end functional signup tests...", { "setup": function () { browser = new Browser({ continueOnError: true, headers: { "Accept": "text/html"} }); } });
 
     jqUnit.asyncTest("Try to create a user with the same address as an existing user...", function () {
         var timestamp = (new Date()).getTime();
@@ -35,9 +34,9 @@ function runTests() {
         var password  = "pass-" + timestamp;
         var email     = "admin@localhost";
 
-        browser.visit(harness.options.baseUrl + "content/signup").then(function () {
+        browser.visit(harness.options.apiUrl + "signup").then(function () {
             jqUnit.start();
-            isBrowserSane(jqUnit, browser);
+            gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser
@@ -70,9 +69,9 @@ function runTests() {
         var password  = "pass-" + timestamp;
         var email     = "email-" + timestamp + "@localhost";
 
-        browser.visit(harness.options.baseUrl + "content/signup").then(function () {
+        browser.visit(harness.options.apiUrl + "signup").then(function () {
             jqUnit.start();
-            isBrowserSane(jqUnit, browser);
+            gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser
@@ -82,7 +81,7 @@ function runTests() {
                 .fill("email", email)
                 .pressButton("Sign Up", function () {
                     jqUnit.start();
-                    isBrowserSane(jqUnit, browser);
+                    gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
 
                     // The signup form should be visible
                     var signupForm = browser.window.$(".signup-form");
@@ -105,7 +104,7 @@ function runTests() {
 
     jqUnit.asyncTest("Try to use an invalid verification code...", function () {
         var timestamp = (new Date()).getTime();
-        browser.visit(harness.options.baseUrl + "content/verify?code=" + timestamp).then(function () {
+        browser.visit(harness.options.apiUrl + "verify/" + timestamp).then(function () {
             jqUnit.start();
             // A "success" message should not be visible
             var feedback = browser.window.$(".verify-success");
@@ -138,7 +137,7 @@ function runTests() {
                 var content = mailObject.text;
 
                 // Get the reset code and continue the reset process
-                var verifyCodeRegexp = new RegExp("(http.+verify\\?code=[a-z0-9-]+)", "i");
+                var verifyCodeRegexp = new RegExp("(http.+verify/[a-z0-9-]+)", "i");
                 var matches = content.toString().match(verifyCodeRegexp);
 
                 jqUnit.assertNotNull("There should be a verification code in the email sent to the user.", matches);
@@ -150,7 +149,7 @@ function runTests() {
                     var verifyBrowser = new Browser();
                     verifyBrowser.visit(verifyUrl).then(function () {
                         jqUnit.start();
-                        isBrowserSane(jqUnit, verifyBrowser);
+                        gpii.express.user.api.tests.isBrowserSane(jqUnit, verifyBrowser);
 
                         // A "success" message should be visible
                         var feedback = verifyBrowser.window.$(".verify-success");
@@ -162,16 +161,16 @@ function runTests() {
 
                         // Log in using the new account
                         jqUnit.stop();
-                        verifyBrowser.visit(harness.options.baseUrl + "content/login").then(function () {
+                        verifyBrowser.visit(harness.options.baseUrl + "login").then(function () {
                             jqUnit.start();
-                            isBrowserSane(jqUnit, verifyBrowser);
+                            gpii.express.user.api.tests.isBrowserSane(jqUnit, verifyBrowser);
                             jqUnit.stop();
 
                             verifyBrowser.fill("username", "reset")
                                 .fill("password", timestamp)
                                 .pressButton("Log In", function () {
                                     jqUnit.start();
-                                    isBrowserSane(jqUnit, verifyBrowser);
+                                    gpii.express.user.api.tests.isBrowserSane(jqUnit, verifyBrowser);
 
                                     // The login form should no longer be visible
                                     var loginForm = verifyBrowser.window.$(".login-form");
@@ -197,9 +196,9 @@ function runTests() {
             mailparser.end();
         });
 
-        browser.visit(harness.options.baseUrl + "content/signup").then(function () {
+        browser.visit(harness.options.apiUrl + "signup").then(function () {
             jqUnit.start();
-            isBrowserSane(jqUnit, browser);
+            gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser
@@ -209,7 +208,7 @@ function runTests() {
                 .fill("email", email)
                 .pressButton("Sign Up", function () {
                     jqUnit.start();
-                    isBrowserSane(jqUnit, browser);
+                    gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
 
                     // The signup form should not be visible
                     var signupForm = browser.window.$(".signup-form");

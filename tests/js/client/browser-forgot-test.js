@@ -10,7 +10,7 @@ var Browser    = require("zombie");
 
 var fs         = require("fs");
 
-var isBrowserSane = require("./browser-sanity.js");
+require("./browser-sanity.js");
 
 require("./zombie-test-harness.js");
 
@@ -48,7 +48,7 @@ function runTests() {
                 var resetBrowser = Browser.create();
                 resetBrowser.visit(resetUrl).then(function () {
                     jqUnit.start();
-                    isBrowserSane(jqUnit, resetBrowser);
+                    gpii.express.user.api.tests.isBrowserSane(jqUnit, resetBrowser);
                     jqUnit.stop();
 
                     // Fill out the form
@@ -57,7 +57,7 @@ function runTests() {
                         .fill("confirm", timestamp + "x")
                         .pressButton("Reset Password", function () {
                             jqUnit.start();
-                            isBrowserSane(jqUnit, resetBrowser);
+                            gpii.express.user.api.tests.isBrowserSane(jqUnit, resetBrowser);
 
                             // The forgot password form should be visible
                             var resetForm = resetBrowser.window.$(".reset-form");
@@ -81,14 +81,14 @@ function runTests() {
 
         browser.visit(harness.options.baseUrl + "content/forgot").then(function () {
             jqUnit.start();
-            isBrowserSane(jqUnit, browser);
+            gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser
                 .fill("email", "reset@localhost")
                 .pressButton("Send Email", function () {
                     jqUnit.start();
-                    isBrowserSane(jqUnit, browser);
+                    gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
 
                     // The "forgot password" form should not be visible
                     var forgotForm = browser.window.$(".forgot-form");
@@ -112,7 +112,7 @@ function runTests() {
 
         browser.visit(harness.options.baseUrl + "content/forgot").then(function () {
             jqUnit.start();
-            isBrowserSane(jqUnit, browser);
+            gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser
@@ -143,7 +143,7 @@ function runTests() {
         var timestamp = (new Date()).getTime();
         browser.visit(harness.options.baseUrl + "content/reset?code=" + timestamp).then(function () {
             jqUnit.start();
-            isBrowserSane(jqUnit, browser);
+            gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser.fill("password", timestamp)
@@ -196,7 +196,7 @@ function runTests() {
                     var resetBrowser = new Browser();
                     resetBrowser.visit(resetUrl).then(function () {
                         jqUnit.start();
-                        isBrowserSane(jqUnit, resetBrowser);
+                        gpii.express.user.api.tests.isBrowserSane(jqUnit, resetBrowser);
                         jqUnit.stop();
 
                         // Fill out the form
@@ -204,7 +204,7 @@ function runTests() {
                             .fill("confirm", timestamp)
                             .pressButton("Reset Password", function () {
                                 jqUnit.start();
-                                isBrowserSane(jqUnit, resetBrowser);
+                                gpii.express.user.api.tests.isBrowserSane(jqUnit, resetBrowser);
 
                                 // The reset form should no longer be visible
                                 var resetForm = resetBrowser.window.$(".reset-form");
@@ -223,14 +223,14 @@ function runTests() {
                                 jqUnit.stop();
                                 resetBrowser.visit(harness.options.baseUrl + "content/login").then(function () {
                                     jqUnit.start();
-                                    isBrowserSane(jqUnit, resetBrowser);
+                                    gpii.express.user.api.tests.isBrowserSane(jqUnit, resetBrowser);
                                     jqUnit.stop();
 
                                     resetBrowser.fill("username", "reset")
                                         .fill("password", timestamp)
                                         .pressButton("Log In", function () {
                                             jqUnit.start();
-                                            isBrowserSane(jqUnit, resetBrowser);
+                                            gpii.express.user.api.tests.isBrowserSane(jqUnit, resetBrowser);
 
                                             // The login form should no longer be visible
                                             var loginForm = resetBrowser.window.$(".login-form");
@@ -259,14 +259,14 @@ function runTests() {
 
         browser.visit(harness.options.baseUrl + "content/forgot").then(function () {
             jqUnit.start();
-            isBrowserSane(jqUnit, browser);
+            gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser
                 .fill("email", "reset@localhost")
                 .pressButton("Send Email", function () {
                     jqUnit.start();
-                    isBrowserSane(jqUnit, browser);
+                    gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
 
                     // The "forgot password" form should not be visible
                     var forgotForm = browser.window.$(".forgot-form");
