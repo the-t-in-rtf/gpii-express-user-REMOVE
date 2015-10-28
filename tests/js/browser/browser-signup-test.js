@@ -14,7 +14,7 @@ var Browser       = require("zombie");
 
 var fs            = require("fs");
 
-require("./browser-sanity.js");
+require("./lib/browser-sanity.js");
 
 require("../test-harness.js");
 
@@ -33,7 +33,7 @@ function runTests() {
         var timestamp = (new Date()).getTime();
         var username  = "user-" + timestamp;
         var password  = "Pass-" + timestamp;
-        var email     = "admin@localhost";
+        var email     = "existing@localhost";
 
         browser.visit(harness.options.apiUrl + "signup").then(function () {
             jqUnit.start();
@@ -150,22 +150,22 @@ function runTests() {
                         gpii.express.user.api.tests.isBrowserSane(jqUnit, verifyBrowser);
 
                         // A "success" message should be visible
-                        var feedback = verifyBrowser.window.$(".verify-success");
+                        var feedback = verifyBrowser.window.$(".success");
                         jqUnit.assertNotUndefined("There should be a positive feedback message...", feedback.html());
 
                         // There should be no alerts
-                        var alert = verifyBrowser.window.$(".verify-error");
+                        var alert = verifyBrowser.window.$(".alert");
                         jqUnit.assertUndefined("There should not be an alert...", alert.html());
 
                         // Log in using the new account
                         jqUnit.stop();
-                        verifyBrowser.visit(harness.options.baseUrl + "login").then(function () {
+                        verifyBrowser.visit(harness.options.apiUrl + "login").then(function () {
                             jqUnit.start();
                             gpii.express.user.api.tests.isBrowserSane(jqUnit, verifyBrowser);
                             jqUnit.stop();
 
-                            verifyBrowser.fill("username", "reset")
-                                .fill("password", timestamp)
+                            verifyBrowser.fill("username", username)
+                                .fill("password", password)
                                 .pressButton("Log In", function () {
                                     jqUnit.start();
                                     gpii.express.user.api.tests.isBrowserSane(jqUnit, verifyBrowser);

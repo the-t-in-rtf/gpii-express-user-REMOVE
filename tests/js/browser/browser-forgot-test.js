@@ -1,7 +1,7 @@
 // Test the "forgot password" reset mechanism end-to-end
 "use strict";
 var fluid      = fluid || require("infusion");
-fluid.setLogging(true);
+//fluid.setLogging(true);
 
 var gpii       = fluid.registerNamespace("gpii");
 
@@ -10,17 +10,14 @@ var Browser    = require("zombie");
 
 var fs         = require("fs");
 
-require("./browser-sanity.js");
+require("./lib/browser-sanity.js");
 
-require("./zombie-test-harness.js");
+require("../test-harness.js");
 
-var harness = gpii.express.couchuser.tests.harness({
-    expressPort: 7533,
-    baseUrl:     "http://localhost:7533/",
-    pouchPort:   7534,
-    pouchUrl:    "http://localhost:7534/",
-    usersUrl:    "http://localhost:7534/_users",
-    smtpPort:    4082
+var harness = gpii.express.user.tests.harness({
+    apiPort:   7533,
+    pouchPort: 7534,
+    mailPort:  4082
 });
 
 function runTests() {
@@ -79,13 +76,13 @@ function runTests() {
             }
         });
 
-        browser.visit(harness.options.baseUrl + "content/forgot").then(function () {
+        browser.visit(harness.options.apiUrl + "forgot").then(function () {
             jqUnit.start();
             gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser
-                .fill("email", "reset@localhost")
+                .fill("email", "existing@localhost")
                 .pressButton("Send Email", function () {
                     jqUnit.start();
                     gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
@@ -110,7 +107,7 @@ function runTests() {
     jqUnit.asyncTest("Try to reset a user who doesn't exist...", function () {
         var timestamp = (new Date()).getTime();
 
-        browser.visit(harness.options.baseUrl + "content/forgot").then(function () {
+        browser.visit(harness.options.apiUrl + "forgot").then(function () {
             jqUnit.start();
             gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
@@ -141,7 +138,7 @@ function runTests() {
 
     jqUnit.asyncTest("Try to use an invalid reset code...", function () {
         var timestamp = (new Date()).getTime();
-        browser.visit(harness.options.baseUrl + "content/reset?code=" + timestamp).then(function () {
+        browser.visit(harness.options.apiUrl + "reset/" + timestamp).then(function () {
             jqUnit.start();
             gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
@@ -172,6 +169,7 @@ function runTests() {
     // and testCases, as we cannot reuse a mail handler between tests.
     jqUnit.asyncTest("Reset a user's password using the \"forgot password\" form...", function () {
         var timestamp = (new Date()).getTime();
+        var password  = "Password-" + timestamp;
 
         // Set up a handler to continue the process once we receive an email
         harness.smtp.events.onMessageReceived.addListener(function (that) {
@@ -184,7 +182,7 @@ function runTests() {
                 var content = mailObject.text;
 
                 // Get the reset code and continue the reset process
-                var resetCodeRegexp = new RegExp("(http.+reset[?]code=[a-z0-9-]+)", "i");
+                var resetCodeRegexp = new RegExp("(http.+reset/[a-z0-9-]+)", "i");
                 var matches = content.toString().match(resetCodeRegexp);
 
                 jqUnit.assertNotNull("There should be a reset code in the email sent to the user.", matches);
@@ -200,8 +198,8 @@ function runTests() {
                         jqUnit.stop();
 
                         // Fill out the form
-                        resetBrowser.fill("password", timestamp)
-                            .fill("confirm", timestamp)
+                        resetBrowser.fill("password", password)
+                            .fill("confirm", password)
                             .pressButton("Reset Password", function () {
                                 jqUnit.start();
                                 gpii.express.user.api.tests.isBrowserSane(jqUnit, resetBrowser);
@@ -221,13 +219,13 @@ function runTests() {
 
                                 // Log in using the new details
                                 jqUnit.stop();
-                                resetBrowser.visit(harness.options.baseUrl + "content/login").then(function () {
+                                resetBrowser.visit(harness.options.apiUrl + "login").then(function () {
                                     jqUnit.start();
                                     gpii.express.user.api.tests.isBrowserSane(jqUnit, resetBrowser);
                                     jqUnit.stop();
 
-                                    resetBrowser.fill("username", "reset")
-                                        .fill("password", timestamp)
+                                    resetBrowser.fill("username", "existing")
+                                        .fill("password", password)
                                         .pressButton("Log In", function () {
                                             jqUnit.start();
                                             gpii.express.user.api.tests.isBrowserSane(jqUnit, resetBrowser);
@@ -257,13 +255,13 @@ function runTests() {
             mailparser.end();
         });
 
-        browser.visit(harness.options.baseUrl + "content/forgot").then(function () {
+        browser.visit(harness.options.apiUrl + "forgot").then(function () {
             jqUnit.start();
             gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);
             jqUnit.stop();
 
             browser
-                .fill("email", "reset@localhost")
+                .fill("email", "existing@localhost")
                 .pressButton("Send Email", function () {
                     jqUnit.start();
                     gpii.express.user.api.tests.isBrowserSane(jqUnit, browser);

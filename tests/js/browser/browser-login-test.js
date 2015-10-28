@@ -11,7 +11,7 @@ var gpii       = fluid.registerNamespace("gpii");
 var jqUnit     = fluid.require("jqUnit");
 var Browser    = require("zombie");
 
-require("./browser-sanity.js");
+require("./lib/browser-sanity.js");
 
 require("../test-harness.js");
 var harness = gpii.express.user.tests.harness({

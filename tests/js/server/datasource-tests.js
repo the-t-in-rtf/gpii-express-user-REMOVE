@@ -5,7 +5,8 @@
  */
 "use strict";
 var fluid  = fluid || require("infusion");
-//fluid.setLogging(true);
+fluid.setLogging(true);
+fluid.logObjectRenderChars = 4096;
 
 var gpii   = fluid.registerNamespace("gpii");
 var jqUnit = require("jqUnit");
@@ -68,7 +69,7 @@ fluid.defaults("gpii.express.users.datasource.tests.caseHolder", {
     gradeNames: ["gpii.express.tests.caseHolder"],
     expected: {
         sample: {
-            "name":     "sample",
+            "username": "sample",
             "email":    "sample@localhost",
             "verified": true
         },
@@ -77,7 +78,7 @@ fluid.defaults("gpii.express.users.datasource.tests.caseHolder", {
         },
         created: {
             "_id":      "created",
-            "name":     "created",
+            "username": "created",
             "email":    "created@localhost"
         },
         updateResponse: {
@@ -85,7 +86,7 @@ fluid.defaults("gpii.express.users.datasource.tests.caseHolder", {
         },
         updated: {
             "_id":      "existing",
-            "name":     "existing",
+            "username": "existing",
             "email":    "existing@localhost",
             "verified": true
         }
@@ -99,7 +100,7 @@ fluid.defaults("gpii.express.users.datasource.tests.caseHolder", {
                     sequence: [
                         {
                             func: "{idReader}.get",
-                            args: [{ _id: "sample"}]
+                            args: [{ _id: "org.couchdb.user:sample"}]
                         },
                         {
                             listener: "gpii.express.user.datasource.tests.checkResult",
@@ -115,7 +116,7 @@ fluid.defaults("gpii.express.users.datasource.tests.caseHolder", {
                     sequence: [
                         {
                             func: "{allDocsReader}.get",
-                            args: [{ key: "sample"}]
+                            args: [{ key: "org.couchdb.user:sample"}]
                         },
                         {
                             listener: "gpii.express.user.datasource.tests.checkResult",
