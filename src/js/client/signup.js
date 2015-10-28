@@ -3,6 +3,8 @@
 (function () {
     "use strict";
 
+    // TODO:  Once we have a client-side validation and feedback loop, this form needs it.
+
     fluid.defaults("gpii.express.user.frontend.signup", {
         gradeNames: ["gpii.express.user.frontend.canHandleStrings", "gpii.express.user.frontend.passwordCheckingForm"],
         container:  ".signup-viewport",
@@ -25,12 +27,18 @@
                 successMessage: {
                     literalValue: "You have successfully created an account.  Check your email for further instructions."
                 }
+            },
+            // TODO: replace this with a more general approach once https://issues.gpii.net/browse/GPII-1324 is resolved
+            errorResponseToModel: {
+                "":           "notfound",
+                errorMessage: "responseJSON.message",
+                fieldErrors:  "responseJSON.fieldErrors"
             }
         },
         templates: {
             initial: "signup-viewport",
             success: "common-success",
-            error:   "common-error"
+            error:   "common-schema-error"
         },
         selectors: {
             success:  ".signup-success",
@@ -44,6 +52,15 @@
         bindings: {
             "username": "username",
             "email":    "email"
+        },
+        components: {
+            error: {
+                options: {
+                    model: {
+                        fieldErrors: "{templateFormControl}.model.fieldErrors"
+                    }
+                }
+            }
         }
     });
 

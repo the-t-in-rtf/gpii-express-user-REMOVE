@@ -95,7 +95,9 @@ fluid.defaults("gpii.express.user.api.verify.handler", {
 fluid.registerNamespace("gpii.express.user.api.verify.handler.html");
 
 gpii.express.user.api.verify.handler.html.sendFinalResponse = function (that, statusCode, body) {
-    that.response.status(statusCode).render(that.options.templateKey, body);
+    //that.response.status(statusCode).render(that.options.templateKey, body);
+    // TODO: send the upstream status code once we are using a client-side test framework that can work with non-200 status codes.
+    that.response.status(200).render(that.options.templateKey, body);
 };
 
 fluid.defaults("gpii.express.user.api.verify.handler.html", {

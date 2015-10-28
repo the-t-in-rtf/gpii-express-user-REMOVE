@@ -1,7 +1,7 @@
 {
     "type":        "object",
-    "id":          "user-post",
-    "title":       "gpii-express-user POST user schema",
+    "id":          "user-signup.json",
+    "title":       "gpii-express-user user signup schema",
     "description": "This schema defines the format accepted when creating a new user.",
     "properties": {
         "email": {
@@ -14,7 +14,7 @@
             "$ref": "user-core.json#/definitions/password"
         },
         "confirm": {
-            "$ref": "user-core.json#/definitions/password"
+            "type": "string"
         },
         "profile": {
             "$ref": "user-core.json#/definitions/profile"

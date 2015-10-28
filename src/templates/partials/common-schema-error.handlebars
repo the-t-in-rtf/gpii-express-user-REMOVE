@@ -1,0 +1,13 @@
+{{#if message}}
+<div data-alert class="alert-box alert" role="alert">
+    <p>{{message}}</p>
+
+    {{#if fieldErrors}}
+        {{#each fieldErrors}}
+            {{#each this}}
+                <p>{{this}}</p>
+            {{/each}}
+        {{/each}}
+    {{/if}}
+</div>
+{{/if}}

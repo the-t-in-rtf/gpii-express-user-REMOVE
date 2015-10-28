@@ -174,10 +174,19 @@ fluid.defaults("gpii.express.user.api.signup.post", {
     },
     components: {
         schemaMiddleware: {
-            type: "gpii.schema.middleware",
+            type: "gpii.schema.middleware.hasParser",
             options: {
+                messages: {
+                    error: "Please check the information you have provided."
+                },
                 schemaDir: schemaDir,
-                schemaKey: "user-signup"
+                schemaKey: "user-signup.json",
+                schemaUrl: {
+                    expander: {
+                        funcName: "fluid.stringTemplate",
+                        args:     ["%baseUrl/schemas/%schemaKey.json", { baseUrl: "", schemaKey: "{that}.options.schemaKey"}]
+                    }
+                }
             }
         },
         requestAwareRouter: {

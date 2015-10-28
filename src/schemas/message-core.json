@@ -17,13 +17,13 @@
     },
     "properties": {
         "ok": {
-            "$ref": "user-message.json#/definitions/ok"
+            "$ref": "#/definitions/ok"
         },
         "errors": {
-            "$ref": "user-message.json#/definitions/errors"
+            "$ref": "#/definitions/errors"
         },
         "message": {
-            "$ref": "user-message#/definitions/message"
+            "$ref": "#/definitions/message"
         }
     },
     "required": ["ok"]

@@ -2,6 +2,7 @@
 //
 // There is some overlap between this and the server-tests.js, a test that fails in both is likely broken on the server side, a test that only fails here is likely broken in the client-facing code.
 
+// TODO: Test signup form with various errors.  Password length errors and messages regarding duplicate users are not displayed correctly.
 "use strict";
 var fluid         = fluid || require("infusion");
 fluid.setLogging(true);
@@ -26,12 +27,12 @@ var harness = gpii.express.user.tests.harness({
 function runTests() {
     var browser;
 
-    jqUnit.module("End-to-end functional signup tests...", { "setup": function () { browser = new Browser({ continueOnError: true, headers: { "Accept": "text/html"} }); } });
+    jqUnit.module("End-to-end functional signup tests...", { "setup": function () { browser = new Browser(); } });
 
     jqUnit.asyncTest("Try to create a user with the same address as an existing user...", function () {
         var timestamp = (new Date()).getTime();
         var username  = "user-" + timestamp;
-        var password  = "pass-" + timestamp;
+        var password  = "Pass-" + timestamp;
         var email     = "admin@localhost";
 
         browser.visit(harness.options.apiUrl + "signup").then(function () {
@@ -66,7 +67,7 @@ function runTests() {
     jqUnit.asyncTest("Try to create a user with mismatching passwords...", function () {
         var timestamp = (new Date()).getTime();
         var username  = "user-" + timestamp;
-        var password  = "pass-" + timestamp;
+        var password  = "Pass-" + timestamp;
         var email     = "email-" + timestamp + "@localhost";
 
         browser.visit(harness.options.apiUrl + "signup").then(function () {
@@ -106,12 +107,9 @@ function runTests() {
         var timestamp = (new Date()).getTime();
         browser.visit(harness.options.apiUrl + "verify/" + timestamp).then(function () {
             jqUnit.start();
-            // A "success" message should not be visible
-            var feedback = browser.window.$(".verify-success");
-            jqUnit.assertEquals("There should not be a positive feedback message...", 0, feedback.html().length);
 
             // There should be at least one alert
-            var alert = browser.window.$(".verify-error");
+            var alert = browser.window.$(".alert");
             jqUnit.assertTrue("There should be an alert...", alert.html().length > 0);
             if (alert.html()) {
                 jqUnit.assertTrue("The alert should have content.", alert.html().trim().length > 0);
@@ -124,7 +122,7 @@ function runTests() {
     jqUnit.asyncTest("Create and verify a new user...", function () {
         var timestamp = (new Date()).getTime();
         var username  = "user-" + timestamp;
-        var password  = "pass-" + timestamp;
+        var password  = "Pass-" + timestamp;
         var email     = "email-" + timestamp + "@localhost";
 
         // Set up a handler to continue the process once we receive an email

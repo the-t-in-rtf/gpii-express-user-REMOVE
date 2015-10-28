@@ -1,7 +1,7 @@
 {
   "type":        "object",
   "id":          "group-core.json",
-  "title":       "gpii-express-user group schema",
+  "title":       "gpii-express-user core group schema",
   "description": "This schema defines the common format for group data transmitted and received by the gpii-express-user library.",
   "definitions": {
     "name": {

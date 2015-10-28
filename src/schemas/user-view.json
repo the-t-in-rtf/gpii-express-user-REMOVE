@@ -1,6 +1,6 @@
 {
     "type":        "object",
-    "id":          "user-post",
+    "id":          "user-view",
     "title":       "gpii-express-user user view schema",
     "description": "This schema defines the format returned when viewing a user's information.",
     "properties": {

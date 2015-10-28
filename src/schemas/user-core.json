@@ -5,6 +5,7 @@
     "description": "This schema defines the common format for user data transmitted and received by the gpii-express-user library.",
     "definitions": {
         "email": {
+            "description": "You must provide a valid email address.",
             "type": "string",
             "anyOf": [
               { "format":  "email" },
@@ -15,6 +16,7 @@
             "type": "string"
         },
         "password": {
+            "description": "Passwords must be at least 9 characters long, and must contain at least one uppercase letter, one lowercase letter, and one number or special character.",
             "allOf": [
                 { "type": "string", "description": "The password must be at least 8 characters long.", "minLength": 8 },
                 { "type": "string", "description": "The password must have at least one uppercase letter.", "pattern": "[A-Z]+"},

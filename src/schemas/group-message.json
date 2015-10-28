@@ -1,7 +1,7 @@
 {
     "type":        "object",
-    "id":          "user-message.json",
-    "title":       "gpii-express-user core user schema",
+    "id":          "group-message.json",
+    "title":       "gpii-express-user group message schema",
     "description": "This schema defines the message format used in providing feedback on a request to /api/group.",
     "allOf": [
         { "$ref": "message-core.json#" },
@@ -9,7 +9,7 @@
             "type": "object",
             "properties": {
                 "group": {
-                    "$ref": "group-view.json#"
+                    "$ref": "group-core.json#"
                 }
             }
         }

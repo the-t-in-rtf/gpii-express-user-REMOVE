@@ -12,7 +12,7 @@
     "url": "https://github.com/the-t-in-rtf/gpii-express-user"
   },
   "author": "Tony Atkins <tony@raisingthefloor.org>",
-  "license": "FreeBSD-3-Clause",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/the-t-in-rtf/gpii-express-user/issues"
   },
@@ -20,7 +20,7 @@
   "dependencies": {
     "gpii-express": "git://github.com/the-t-in-rtf/gpii-express#102d082ec36ef46875670079abeb022d07ae3bcd",
     "gpii-handlebars": "git://github.com/the-t-in-rtf/gpii-handlebars.git#4912292d3ebd4e0dc50b9ebb69e10fd85bb45e6c",
-    "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#5ce52ac33c081766171ae2b241f917d019eb9a6f",
+    "gpii-json-schema": "git://github.com/the-t-in-rtf/gpii-json-schema.git#f69a98b9fb23b34d5ef6d6b0056573fc8576b9a6",
     "gpii-mail-test": "git://github.com/the-t-in-rtf/gpii-mail-test.git#3459227b8af02340f1d2d0d8aba64611ed3620bc",
     "grunt": "0.4.4",
     "grunt-contrib-jshint": "0.9.0",
@@ -40,6 +40,6 @@
     "jqUnit":     "git://github.com/fluid-project/node-jqUnit.git#d46bb932fa4069770852c51a92182939958f2d75",
     "kettle":     "git://github.com/amb26/kettle.git#5859890a80794efe6797aed520efae39f8c66851",
     "mailparser": "^0.5.2",
-    "zombie":     "3.0.15"
+    "zombie":     "3.1.1"
   }
 }
