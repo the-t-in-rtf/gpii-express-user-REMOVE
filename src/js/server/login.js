@@ -32,7 +32,7 @@ gpii.express.user.api.login.post.handler.verifyPassword = function (that, respon
 
 fluid.defaults("gpii.express.user.api.login.post.handler", {
     gradeNames: ["gpii.schema.handler"],
-    schemaKey:  "message-core",
+    schemaKey:  "message-core.json",
     schemaUrl:  "/schemas/message-core",
     sessionKey: "_gpii_user",
     url:    {
@@ -86,7 +86,7 @@ fluid.defaults("gpii.express.user.api.login.post", {
             type: "gpii.schema.middleware",
             options: {
                 schemaDir: schemaDir,
-                schemaKey: "user-login"
+                schemaKey: "user-login.json"
             }
         },
         requestAwareRouter: {
