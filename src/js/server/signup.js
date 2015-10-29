@@ -30,20 +30,13 @@ gpii.express.user.api.signup.post.handler.checkForExistingUser = function (that,
     var derived_key = gpii.express.user.password.encode(that.request.body.password, salt);
     var code        = gpii.express.user.password.generateSalt(that.options.verifyCodeLength);
 
-    var combinedRecord                   = fluid.copy(that.request.body);
+    // Our rules will set the defaults and pull approved values from the original submission.
+    var combinedRecord                   = fluid.model.transformWithRules(that.request.body, that.options.rules.write);
+
     // Set the "name" to the username for backward compatibility with CouchDB
-    combinedRecord.name                  = combinedRecord.username;
     combinedRecord.salt                  = salt;
     combinedRecord.derived_key           = derived_key;
     combinedRecord[that.options.codeKey] = code;
-
-    // Make sure we don't inadvertently save the original password to the database.
-    delete combinedRecord.password;
-    delete combinedRecord.confirm;
-
-    fluid.each(that.options.userDefaults, function (value, key) {
-        combinedRecord[key] = value;
-    });
 
     // Set the ID to match the CouchDB conventions, for backward compatibility
     combinedRecord._id = "org.couch.db.user:" + combinedRecord.username;
@@ -63,8 +56,7 @@ gpii.express.user.api.signup.post.handler.checkForExistingUser = function (that,
             return that.sendResponse(response.statusCode, { ok: false, message: body});
         }
 
-        var mailOptions = fluid.copy(that.options.mailDefaults);
-        mailOptions.to  = that.request.body.email;
+        var mailOptions = fluid.model.transformWithRules(that.request.body, that.options.rules.mail);
 
         var templateContext = fluid.copy(that.options.templateDefaultContext);
         templateContext.user = combinedRecord;
@@ -77,12 +69,28 @@ fluid.defaults("gpii.express.user.api.signup.post.handler", {
     templateDefaultContext: {
         app: "{gpii.express}.options.config.app"
     },
+    rules: {
+        // Only let the user supply a very particular set of fields.
+        write: {
+            "name":          "username", // Default rules are designed to cater to CouchDB  and express-couchUser conventions, but can be overriden.
+            "username":      "username",
+            "email":         "email",
+            roles:           { literalValue: []},
+            type:            { literalValue: "user"},
+            password_scheme: { literalValue: "pbkdf2"},
+            iterations:      { literalValue: 10},
+            verified:        { literalValue: false}
+        },
+        mail: {
+            from:    { literalValue: "test@localhost"},
+            to:      "email",
+            subject: { literalValue: "Please verify your account..."}
+        }
+    },
     urls: "{gpii.express.user.api.signup.post}.options.urls",
     saltLength: "{gpii.express.user.api.signup.post}.options.saltLength",
     verifyCodeLength: "{gpii.express.user.api.signup.post}.options.verifyCodeLength",
     codeKey: "{gpii.express.user.api.signup.post}.options.codeKey",
-    mailDefaults: "{gpii.express.user.api.signup.post}.options.mailDefaults",
-    userDefaults: "{gpii.express.user.api.signup.post}.options.userDefaults",
     invokers: {
         handleRequest: {
             funcName: "gpii.express.user.api.signup.post.handler.lookupExistingUser",
@@ -148,29 +156,12 @@ fluid.defaults("gpii.express.user.api.signup.post", {
         },
         write: "{that}.options.couch.userDbUrl"
     },
-    rules: {
-        write: {
-            "": "",
-            "name": "username" // Default rules are designed to cater to CouchDB  and express-couchUser conventions, but can be overriden.
-        }
-    },
     distributeOptions: {
         source: "{that}.options.rules",
         target: "{that gpii.express.handler}.options.rules"
     },
     termMaps: {
         read: { username: "%username", email: "%email"}
-    },
-    mailDefaults: {
-        from:    "test@localhost",
-        subject: "Please verify your account..."
-    },
-    userDefaults: {
-        roles:           [],
-        type:            "user",
-        password_scheme: "pbkdf2",
-        iterations:      10,
-        verified:        false
     },
     components: {
         schemaMiddleware: {
