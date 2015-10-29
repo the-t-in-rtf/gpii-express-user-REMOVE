@@ -16,7 +16,7 @@
             "type": "string"
         },
         "password": {
-            "description": "Passwords must be at least 9 characters long, and must contain at least one uppercase letter, one lowercase letter, and one number or special character.",
+            "description": "Passwords must be at least 8 characters long, and must contain at least one uppercase letter, one lowercase letter, and one number or special character.",
             "allOf": [
                 { "type": "string", "description": "The password must be at least 8 characters long.", "minLength": 8 },
                 { "type": "string", "description": "The password must have at least one uppercase letter.", "pattern": "[A-Z]+"},
