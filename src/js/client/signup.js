@@ -7,7 +7,6 @@
 
     fluid.defaults("gpii.express.user.frontend.signup", {
         gradeNames: ["gpii.express.user.frontend.canHandleStrings", "gpii.express.user.frontend.passwordCheckingForm"],
-        container:  ".signup-viewport",
         ajaxOptions: {
             type:   "POST",
             url:    "/api/user/signup",
@@ -41,6 +40,7 @@
             error:   "common-schema-error"
         },
         selectors: {
+            initial:  ".signup-viewport",
             success:  ".signup-success",
             error:    ".signup-error",
             submit:   ".signup-submit",

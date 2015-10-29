@@ -4,7 +4,6 @@
     "use strict";
     fluid.defaults("gpii.express.user.frontend.forgot", {
         gradeNames: ["gpii.express.user.frontend.canHandleStrings", "gpii.templates.templateFormControl", "fluid.viewComponent"],
-        container:  ".forgot-viewport",
         ajaxOptions: {
             type:        "POST",
             url:         "/api/user/forgot"
@@ -13,7 +12,7 @@
             email: ""
         },
         selectors: {
-            initial: "",
+            initial: ".forgot-viewport",
             error:   ".forgot-error",
             success: ".forgot-success",
             submit:  ".forgot-button",

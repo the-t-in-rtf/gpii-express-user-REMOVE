@@ -9,7 +9,6 @@
 
     fluid.defaults("gpii.express.user.frontend.reset", {
         gradeNames: ["gpii.express.user.frontend.canHandleStrings", "gpii.express.user.frontend.passwordCheckingForm"],
-        container:  ".reset-viewport",
         ajaxOptions: {
             type:    "POST",
             url:     {
@@ -35,7 +34,7 @@
             initial: "reset-viewport"
         },
         selectors: {
-            initial: "",
+            initial: ".reset-viewport",
             success: ".reset-success",
             error:   ".reset-error",
             submit:  ".reset-button"
